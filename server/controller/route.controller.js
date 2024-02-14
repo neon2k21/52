@@ -2,31 +2,14 @@ const db = require('../config')
 const { format, addDays, isWeekend, differenceInDays, parse } = require('date-fns');
 
 
-class TaskController{
+class RouteController{
     
 
-    async createTask(req,res){
+    async createRoute(req,res){
       
         // 1) Получаем актуальную дату и конвертируем ее в строку
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
-
-        // 2) Устанавливаем дедлайн через 3 рабочих дня, игнорируя выходные
-        let deadline = addDays(today, 3);
-        while (isWeekend(deadline)) {
-            deadline = addDays(deadline, 1);
-        }
-
-        // 3) Конвертируем дедлайн из строки в дату и проверяем на просрочку
-        const formattedDeadline = format(deadline, 'yyyy-MM-dd');
-       
-
-       
-        const { object, work_category, type_of_work, description} = req.body
-              
-       const sql1_result = await getInfoForCreate(db,object)
-        console.log(sql1_result)
-
 
         const sql2 = (
         `insert into tasks (  object, worker, task_stage, work_category, type_of_work, date_of_creation, date_of_deadline, description, image) 

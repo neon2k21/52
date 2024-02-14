@@ -1,16 +1,8 @@
 const db = require('../config')
 
-router.post('/createreview',)
 
-router.get('/getallreviews',)
 
-router.post('/getcurrentreview',)
-
-router.delete('/deleteeview',)
-
-router.put('/applyreview',)
-
-class ReportController{
+class ReviewController{
 
 
     async createReview(req,res){
@@ -24,23 +16,34 @@ class ReportController{
             else return res.json(rows)
     })
     } 
-    
-    async updateObject(req,res){
-        const { longitute, altitude, category, working_time, address, image, name, phone, website, id } = req.body
+
+    async getAllReviews(req,res){
+        
         const sql = (
-            `update objects set longitute = ?, altitude = ?, category = ?, working_time = ?, address = ?, image = ?, name = ?, phone = ?, website = ? where id = ?;`
+            `select * from Review;`
         )
-        db.all(sql,[longitute, altitude, category, working_time, address, image, name, phone, website, id], (err,rows) => {
+        db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    } 
+    
+    async applyReview(req,res){
+        const { id } = req.body
+        const sql = (
+            `update Review set checked = 1 where id = ?;`
+        )
+        db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)
     })
         
     }
 
-    async deleteObject(req,res){
+    async deleteReview(req,res){
         const { id } = req.body
         const sql = (
-            `delete from objects where id = ?;`
+            `delete from Review where id = ?;`
         )
         db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)
@@ -50,38 +53,22 @@ class ReportController{
     }
   
 
-   async getAllObjects(req,res){
-
-        const sql = 
-        `SELECT * from objects`
-       
-        await db.all(sql,[], (err,rows) => {
-            if (err) return res.json(err)
-            else return res.json(rows)
-       })
-
-    }
-
-    async getCurrentObject(req,res){
+    async getCurrentReview(req,res){
 
         const {id} = req.body
        
         const sql = 
-            `SELECT * from objects WHERE  id= ?;`
+            `SELECT * from Review WHERE id= ?;`
 
         db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)
        })
     }
-
-    
-
-    
-
+ 
 
 }
 
 
 
-module.exports = new ReportController()
+module.exports = new ReviewController()
