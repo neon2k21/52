@@ -1,15 +1,15 @@
 const Router = require('express')
 const router = new Router()
-const reportController = require('../controller/review.controller')
+const reviewController = require('../controller/review.controller')
 
-router.post('/createreview',)
+router.post('/createreview', reviewController.createReview)
 
-router.get('/getallreviews',)
+router.get('/getallreviews', reviewController.getAllReviews)
 
-router.post('/getcurrentreview',)
+router.post('/getcurrentreview', reviewController.getCurrentReview)
 
-router.delete('/deleteeview',)
+router.delete('/deleteeview', reviewController.deleteReview)
 
-router.put('/applyreview',)
+router.put('/applyreview', reviewController.applyReview)
 
 module.exports = router

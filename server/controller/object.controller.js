@@ -1,13 +1,6 @@
 const db = require('../config')
 
 
-// router.get('/getallobjects',)
-// router.post('/addnewobject')
-// router.delete('/deleteobject')
-// router.put('/updateobject')
-// router.post('/getcurrentobject')
-
-
 class ObjectController{
 
     async createObject(req,res){
@@ -46,7 +39,6 @@ class ObjectController{
         
     }
   
-
    async getAllObjects(req,res){
 
         const sql = 

@@ -1,12 +1,12 @@
 const Router = require('express')
 const router = new Router()
-const taskController = require('../controller/route.controller')
+const routeController = require('../controller/route.controller')
 
 
-router.post('/createroute',)
-router.post('/getroute',)
-router.post('/markroute',)
-router.post('/deleteroute',)
+router.post('/createroute', routeController.createRoute)
+router.post('/getroute', routeController.getRoute)
+router.post('/markroute', routeController.updateRating)
+router.post('/deleteroute', routeController.deleteRoute)
 
 
 

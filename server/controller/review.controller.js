@@ -1,4 +1,5 @@
 const db = require('../config')
+const { format } = require('date-fns');
 
 
 
@@ -6,12 +7,15 @@ class ReviewController{
 
 
     async createReview(req,res){
+
+        const today = new Date();
+        const formattedToday = format(today, 'yyyy-MM-dd');
       
         const {  user, object, comment, mark, photo, link, checked } = req.body
         const sql = (
-            `insert into Review ( user, object, comment, mark, photo, link, checked ) values ($1, $2, $3, $4, $5, $6, $7);`
+            `insert into Review ( user, object, comment, mark, photo, link, checked, data ) values (?, ?, ?, ?, ?, ?, ?, ?);`
         )
-        db.all(sql,[user, object, comment, mark, photo, link, checked], (err,rows) => {
+        db.all(sql,[user, object, comment, mark, photo, link, checked, formattedToday], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)
     })
