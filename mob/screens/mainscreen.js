@@ -1,61 +1,283 @@
-import { StatusBar } from 'expo-status-bar';
-import { FlatList, Image, Text, TouchableOpacity, View, StyleSheet, Linking, Alert, Platform } from 'react-native';
+import { FlatList, Button, TextInput, Image, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, Alert, Platform } from 'react-native';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
-import { useEffect, useState } from 'react';
-import MapView from 'react-native-maps';
+import {  useEffect, useCallback, useMemo, useRef, useState, createRef } from 'react';
+import {MagnifyingGlassCircleIcon} from 'react-native-heroicons/solid'
+import YaMap, {Marker,RoutesFoundEvent} from 'react-native-yamap';
+import { BottomSheetModalProvider, BottomSheetModal } from '@gorhom/bottom-sheet';
+import { ip_address } from '../config';
+import * as Location from 'expo-location';
 
-import GetLocation from 'react-native-get-location'
 
+
+YaMap.init('4dcbaad2-be4e-4626-9b1a-a7c4b15ca00b')
+YaMap.setLocale('ru_Ru')
 
 
 
 export default function UserMainScreen() {
 
-  
-      
+  let markers_data = []
+  const [location, setLocation] = useState({"coords": {"accuracy": 600, "altitude": 0, "altitudeAccuracy": 0, "heading": 0, "latitude": 53.4186, "longitude": 59.0472, "speed": 0}, "mocked": false, "timestamp": 1708581410459});
  
+  const [ selectedMarkerData, setSelectedMarkerData] = useState({});
+  const [ search, setSearch] = useState();
+  const [ data, setData] = useState([])
 
-  useEffect(()=>{
-    
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 60000,
-  })
-  .then(location => {
-      console.log(location);
-  })
-  .catch(error => {
-      const { code, message } = error;
-      console.warn(code, message);
-  })
+  map = createRef(YaMap);
+
+  const bottomSheetRef = useRef(null);
+
+  const snapPoints = useMemo(() => ['20%', '50%','100%'], []);
+
+
+  // Geolocation.watchPosition(
+  //   success: (
+  //     position: {
+  //       coords: {
+  //         latitude: number;
+  //         longitude: number;
+  //         altitude: number | null;
+  //         accuracy: number;
+  //         altitudeAccuracy: number | null;
+  //         heading: number | null;
+  //         speed: number | null;
+  //       };
+  //       timestamp: number;
+  //     }
+  //   ) => void,
+  //   error?: (
+  //     error: {
+  //       code: number;
+  //       message: string;
+  //       PERMISSION_DENIED: number;
+  //       POSITION_UNAVAILABLE: number;
+  //       TIMEOUT: number;
+  //     }
+  //   ) => void,
+  //   options?: {
+  //     interval?: number;
+  //     fastestInterval?: number;
+  //     timeout?: number;
+  //     maximumAge?: number;
+  //     enableHighAccuracy?: boolean;
+  //     distanceFilter?: number;
+  //     useSignificantChanges?: boolean;
+  //   }
+  // ) => number
+
+
+
+  useEffect(() => {
    
-  },[])
 
+   const getPermissions = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log("Please grant location permissions");
+      return;
+    }
+
+    let currentLocation = await Location.getCurrentPositionAsync({});
+    setLocation(currentLocation);
+    console.log("Location:");
+    console.log(currentLocation);
+  };
+  getPermissions();
+  getAllObjects()
+
+  },[]);
+
+  const getAllObjects = () =>{
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+      "contact": Number(global.id)
+    });
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    
+    fetch(ip_address+'/getallobjects', requestOptions)
+      .then( response => response.json())
+      .then( result => {
+       console.log('res',result)
+        setData(result)
+
+    })
+      .catch(error => console.log('error', error));
+
+}
   
+  const setDataToBottomSheet = (id,altitude,longitute,name,address, working_time, image, website, phone) => {
+      console.log(id,altitude,longitute,name,address, working_time, image, website, phone)
+       setSelectedMarkerData(
+      {
+        "id": id,
+        "altitude": altitude,
+        "longitute":longitute,
+        "name":name,
+        "address":address, 
+        "working_time":working_time, 
+        "image":image, 
+        "website":website,
+         "phone":phone
+        
+      }
+    )
+
+  }
+
+  const onChangeText = async (text) => {
+    setSearch(text)
+    console.log('get data: ', search)
+    if (text.length === 0) return setData([]);
+    if(text.length > 2) {
+
+    }
+  }
+  
+  function handleSheetChanges()  {
+    bottomSheetRef.current?.present()
+  }
+
+ 
+  function createRoute(point1,point2,type){
+    // const [point1,point2,type] = props
+     let points=[point1[0],point2[0]]
+    //  this.map.current.findRoutes(points, [], ()=>{
+    //   const arr = [];
+    //   evt.routes[0].sections.forEach(section =>
+    //     section.points.forEach(point => arr.push(point)),
+    //   );
+    //   setPoints(arr);
+    // },);
+    // return(
+    //   <Polyline points={pointsssss} strokeColor={'red'} strokeWidth={4} />
+    // )
+    console.error(points)
+
+    this.map.current.findDrivingRoutes([point1[0],point2[0]], (RoutesFoundEvent) => alert(RoutesFoundEvent.nativeEvent))
+    console.error(this.map.current.findRoutes(points, ['car'], () => null))
+    
+  }
+
+
+
+
   return (
-  <View  className="w-full h-full ">
-    <MapView
-    showsUserLocation={true}
-    showsMyLocationButton={true}
-    followsUserLocation={true}
-    showsCompass={true}
-    className="w-full h-full "
+    <BottomSheetModalProvider>
+        <View  className="w-full h-full bg-red-500">
+
+          <View style={{backgroundColor:'white',top: 40, height:widthPercentageToDP(10),
+            width:widthPercentageToDP(80), alignSelf:'center'}} className="rounded-full">
+
+            <View style={{top: 5, left:10, height:widthPercentageToDP(8),
+            width:widthPercentageToDP(60), position:'absolute'}} className="rounded-full">
+              <TextInput style={{left:10,width:widthPercentageToDP(50),top:1 }} placeholder='Поиск...' value={search} onChangeText={onChangeText}/>
+            </View>
+
+            <MagnifyingGlassCircleIcon color={'black'} size={widthPercentageToDP(12)} style={{top: -4, right:-275}}/>
+
+          </View>
+
+
+
+      
+              <TouchableOpacity onPress={handleSheetChanges}>
+               
+                  <Text>
+                    presemnt
+                  </Text>
+
+              </TouchableOpacity>
+          
+
+<BottomSheetModal
+    ref = {bottomSheetRef}
+    index={0}
+    snapPoints={snapPoints}
+  >
+    
+   
+    <View style={styles.contentContainer}>
+      <Text> {selectedMarkerData.id} </Text>
+      <Text> {selectedMarkerData.altitude} </Text>
+      <Text> {selectedMarkerData.longitute} </Text>
+      <Text> {selectedMarkerData.name} </Text>
+      <Text> {selectedMarkerData.address} </Text>
+      <Text> {selectedMarkerData.working_time} </Text>
+      <Text> {selectedMarkerData.image} </Text>
+      <Text> {selectedMarkerData.phone} </Text>
+
+
+      <View>
+            <Text>
+              Отзывы
+            </Text>
+            <Text>
+              Маршруты
+            </Text>
+      </View>
+
+      <TouchableOpacity onPress={()=>{createRoute([point={lon:location.coords.latitude, lat:location.coords.longitude}],[point={lon:parseFloat(selectedMarkerData.altitude), lat:parseFloat(selectedMarkerData.longitute)}],'')}}>
+        <Text>
+          Маршрут 
+        </Text>
+      </TouchableOpacity>
+
+    </View>
+  </BottomSheetModal>
+
+
+<YaMap
+  ref={this.map}
+  showUserPosition
+  followUser
   initialRegion={{
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    lat: location.coords.latitude,
+    lon: location.coords.longitude,
+    zoom: 17,
+    azimuth: 80,
+    tilt: 100
   }}
-/>
-  </View>
-  );
+ 
+  style={{ flex: 1 }}
+>
+  {data.map((val, index) => {
+   
+  return (
+  <Marker  point={{ lat: parseFloat(val.longitute), lon: parseFloat(val.altitude)}} key={index} onPress={()=>{console.log(val.address); setDataToBottomSheet(val.id,val.altitude,val.longitute,val.name,val.address, val.working_time, val.image, val.website, val.phone); handleSheetChanges()}}/>
+          )
+     })}
+</YaMap>
+
+
+    
+
+    
+</View>
+    </BottomSheetModalProvider>
+  
+  ) 
 }
 
 
 
 const styles = StyleSheet.create({
 
-
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
     externalView:{
       width:'100%',
       height:'100%',

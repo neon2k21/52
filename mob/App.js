@@ -3,6 +3,8 @@ import AppNavigation from "./navigation/navigation";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 import {useFonts} from 'expo-font';
 import { useCallback } from "react";
+import 'react-native-gesture-handler'
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 
 
@@ -24,10 +26,12 @@ export default function App() {
     return null;
   }
   return (
-    <View className="w-full h-full" >
-      
+    <GestureHandlerRootView style={{ flex: 1 }}>
+       <View className="w-full h-full" >
           <AppNavigation/>
       </View>
+    </GestureHandlerRootView>
+   
   );
 }
 
