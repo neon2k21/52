@@ -6,6 +6,7 @@ import YaMap, {Marker,RoutesFoundEvent} from 'react-native-yamap';
 import { BottomSheetModalProvider, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ip_address } from '../config';
 import * as Location from 'expo-location';
+import SelectedMarker from '../components/map/selectedMarker';
 
 
 
@@ -16,7 +17,7 @@ YaMap.setLocale('ru_Ru')
 
 export default function UserMainScreen() {
 
-  let markers_data = []
+  const [markers_data,setmarkers_data] = useState([])
   const [location, setLocation] = useState({"coords": {"accuracy": 600, "altitude": 0, "altitudeAccuracy": 0, "heading": 0, "latitude": 53.4186, "longitude": 59.0472, "speed": 0}, "mocked": false, "timestamp": 1708581410459});
  
   const [ selectedMarkerData, setSelectedMarkerData] = useState({});
@@ -28,43 +29,6 @@ export default function UserMainScreen() {
   const bottomSheetRef = useRef(null);
 
   const snapPoints = useMemo(() => ['20%', '50%','100%'], []);
-
-
-  // Geolocation.watchPosition(
-  //   success: (
-  //     position: {
-  //       coords: {
-  //         latitude: number;
-  //         longitude: number;
-  //         altitude: number | null;
-  //         accuracy: number;
-  //         altitudeAccuracy: number | null;
-  //         heading: number | null;
-  //         speed: number | null;
-  //       };
-  //       timestamp: number;
-  //     }
-  //   ) => void,
-  //   error?: (
-  //     error: {
-  //       code: number;
-  //       message: string;
-  //       PERMISSION_DENIED: number;
-  //       POSITION_UNAVAILABLE: number;
-  //       TIMEOUT: number;
-  //     }
-  //   ) => void,
-  //   options?: {
-  //     interval?: number;
-  //     fastestInterval?: number;
-  //     timeout?: number;
-  //     maximumAge?: number;
-  //     enableHighAccuracy?: boolean;
-  //     distanceFilter?: number;
-  //     useSignificantChanges?: boolean;
-  //   }
-  // ) => number
-
 
 
   useEffect(() => {
@@ -104,7 +68,6 @@ export default function UserMainScreen() {
     fetch(ip_address+'/getallobjects', requestOptions)
       .then( response => response.json())
       .then( result => {
-       console.log('res',result)
         setData(result)
 
     })
@@ -121,7 +84,6 @@ export default function UserMainScreen() {
         "longitute":longitute,
         "name":name,
         "address":address, 
-        "working_time":working_time, 
         "image":image, 
         "website":website,
          "phone":phone
@@ -142,6 +104,12 @@ export default function UserMainScreen() {
   
   function handleSheetChanges()  {
     bottomSheetRef.current?.present()
+  }
+
+ function addToFlatlist  (id,altitude,longitute,name) {
+    var arr = [...markers_data, { "id":id, "altitude":altitude, "longitute":longitute, "name": name}]
+    setmarkers_data(arr)
+    console.error(markers_data)
   }
 
  
@@ -169,11 +137,47 @@ export default function UserMainScreen() {
 
 
   return (
-    <BottomSheetModalProvider>
-        <View  className="w-full h-full bg-red-500">
+    <BottomSheetModalProvider style={{height:'100%',width:'100%',backgroundColor:'red'}}>
+     
+
+        <YaMap
+          ref={this.map}
+          showUserPosition
+          followUser
+          initialRegion={{
+            lat: location.coords.latitude,
+            lon: location.coords.longitude,
+            zoom: 1,
+            azimuth: 80,
+            tilt: 100
+          }}
+  style={{ flex: 1,width:'100%',height:'100%' }}
+>
+ {
+    data.map((val, index) => {
+   
+      return (
+       
+            <Marker
+            onPress={()=>{
+              console.log(val.address); 
+              setDataToBottomSheet(val.id,val.altitude,val.longitute,val.name,val.address, val.working_time, val.image, val.website, val.phone);
+              handleSheetChanges()
+                      }
+              }
+              point={{ lat: parseFloat(val.longitute), lon: parseFloat(val.altitude)}}
+             
+              />
+       
+      
+              )
+         })
+  }
+  
+</YaMap>
 
           <View style={{backgroundColor:'white',top: 40, height:widthPercentageToDP(10),
-            width:widthPercentageToDP(80), alignSelf:'center'}} className="rounded-full">
+            width:widthPercentageToDP(80), alignSelf:'center', position:'absolute'}} className="rounded-full">
 
             <View style={{top: 5, left:10, height:widthPercentageToDP(8),
             width:widthPercentageToDP(60), position:'absolute'}} className="rounded-full">
@@ -184,16 +188,24 @@ export default function UserMainScreen() {
 
           </View>
 
-
+          <FlatList
+            data={markers_data}
+            extraData={markers_data}
+            vertical={true}
+            numColumns={2}
+            contentContainerStyle={{alignSelf: 'flex-start'}}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{position:'absolute',backgroundColor:'red', width:'100%',height:120,top:90}}
+            renderItem={({item})=> (
+             
+              <SelectedMarker id={item.id} altitude={item.altitude} longitute={item.longitute} name={item.name}/>
+            )}
+           
+            />
 
       
-              <TouchableOpacity onPress={handleSheetChanges}>
-               
-                  <Text>
-                    presemnt
-                  </Text>
-
-              </TouchableOpacity>
+        
           
 
 <BottomSheetModal
@@ -229,37 +241,24 @@ export default function UserMainScreen() {
         </Text>
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={()=>{addToFlatlist(selectedMarkerData.id,parseFloat(selectedMarkerData.altitude),parseFloat(selectedMarkerData.longitute), selectedMarkerData.name)}}>
+        <Text>
+          добавить 
+        </Text>
+      </TouchableOpacity>
+      <SelectedMarker />
+
     </View>
   </BottomSheetModal>
 
 
-<YaMap
-  ref={this.map}
-  showUserPosition
-  followUser
-  initialRegion={{
-    lat: location.coords.latitude,
-    lon: location.coords.longitude,
-    zoom: 17,
-    azimuth: 80,
-    tilt: 100
-  }}
- 
-  style={{ flex: 1 }}
->
-  {data.map((val, index) => {
-   
-  return (
-  <Marker  point={{ lat: parseFloat(val.longitute), lon: parseFloat(val.altitude)}} key={index} onPress={()=>{console.log(val.address); setDataToBottomSheet(val.id,val.altitude,val.longitute,val.name,val.address, val.working_time, val.image, val.website, val.phone); handleSheetChanges()}}/>
-          )
-     })}
-</YaMap>
+
 
 
     
 
     
-</View>
+
     </BottomSheetModalProvider>
   
   ) 

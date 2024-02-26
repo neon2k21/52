@@ -5,11 +5,11 @@ class ObjectController{
 
     async createObject(req,res){
       
-        const { longitute, altitude, category, working_time, address, image, name, phone, website } = req.body
+        const { longitute, altitude, category, address, image, name, phone, website, monday,tuesday,wednesday,thursday,friday, saturday,sunday } = req.body
         const sql = (
-            `insert into objects ( longitute, altitude, category, working_time, address, image, name, phone, website) values ($1, $2, $3, $4, $5, $6, $7, $8, $9);`
+            `insert into objects ( longitute, altitude, category, address, image, name, phone, website, monday,tuesday,wednesday,thursday,friday, saturday,sunday) values ( $1, $2, $3, $4, $5, $6, $7, $8, $9,$10,$11,$12,$13,$14,$15);`
         )
-        db.all(sql,[longitute, altitude, category, working_time, address, image, name, phone, website], (err,rows) => {
+        db.all(sql,[longitute, altitude, category,  address, image, name, phone, website, monday,tuesday,wednesday,thursday,friday, saturday,sunday], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)
     })

@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/r/Documents/ExpoProjects/52/server/db/db.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="3454"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainReview"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1"></sql><current_tab id="0"/></tab_sql></sqlb_project>
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/r/Documents/ExpoProjects/52/server/db/db.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="4165"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainReview"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE &quot;objects&quot; (
+	&quot;id&quot;	INTEGER,
+	&quot;longitute&quot;	TEXT NOT NULL,
+	&quot;altitude&quot;	TEXT NOT NULL,
+	&quot;category&quot;	INTEGER NOT NULL,
+	&quot;address&quot;	TEXT NOT NULL,
+	&quot;image&quot;	TEXT NOT NULL,
+	&quot;name&quot;	TEXT NOT NULL,
+	&quot;phone&quot;	TEXT NOT NULL,
+	&quot;website&quot;	TEXT,
+	&quot;monday&quot;	TEXT NOT NULL,
+	&quot;tuesday&quot;	TEXT NOT NULL,
+	&quot;wednesday&quot;	TEXT NOT NULL,
+	&quot;thursday&quot;	TEXT NOT NULL,
+	&quot;friday&quot;	TEXT NOT NULL,
+	&quot;saturday&quot;	TEXT NOT NULL,
+	&quot;sunday&quot;	TEXT NOT NULL,
+	PRIMARY KEY(&quot;id&quot; AUTOINCREMENT),
+	FOREIGN KEY(&quot;category&quot;) REFERENCES &quot;object_category&quot;(&quot;id&quot;)
+)</sql><current_tab id="0"/></tab_sql></sqlb_project>
