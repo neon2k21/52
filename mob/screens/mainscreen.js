@@ -1,6 +1,6 @@
 import { FlatList, Button, TextInput, Image, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, Alert, Platform } from 'react-native';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
-import { useEffect, useCallback, useMemo, useRef, useState, createRef } from 'react';
+import { useEffect, useMemo, useRef, useState, createRef } from 'react';
 import { MagnifyingGlassCircleIcon } from 'react-native-heroicons/solid'
 import YaMap, { Marker, Polyline, RoutesFoundEvent } from 'react-native-yamap';
 import { BottomSheetModalProvider, BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -8,7 +8,7 @@ import { ip_address } from '../config';
 import * as Location from 'expo-location';
 import SelectedMarker from '../components/map/selectedMarker';
 
-
+let onRoute = false
 
 
 YaMap.init('4dcbaad2-be4e-4626-9b1a-a7c4b15ca00b')
@@ -19,8 +19,11 @@ YaMap.setLocale('ru_Ru')
 export default function UserMainScreen() {
 
 
-  const [routing, setRouting] = useState([])
 
+  
+ const [routing, setRouting] = useState([])
+
+  const [onRoute, setOnRoute] = useState(false)
 
   const [markers_data, setmarkers_data] = useState([])
   const [user_location, set_user_location] = useState([])
@@ -36,8 +39,9 @@ export default function UserMainScreen() {
 
   const snapPoints = useMemo(() => ['20%', '50%', '100%'], []);
 
-
-  Location.watchPositionAsync()
+  global.route_type='walk' 
+  // type MasstransitVehicles = 'bus' | 'trolleybus' | 'tramway' | 'minibus' | 'suburban' | 'underground' | 'ferry' | 'cable' | 'funicular';
+  //type Vehicles = MasstransitVehicles | 'walk' | 'car';
 
   useEffect(() => {
 
@@ -51,8 +55,7 @@ export default function UserMainScreen() {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
-      console.log("Location:");
-      console.log(currentLocation);
+      set_user_location({latitude: currentLocation.coords.latitude, longitude: currentLocation.coords.longitude})
     };
 
     const watch = async() => {
@@ -62,8 +65,13 @@ export default function UserMainScreen() {
       },
       (location)=>{
       const {coords} = location;
-      const {latitude,longitude} = coords
-      }
+      const {latitude,longitude } = coords
+      set_user_location({latitude,longitude})
+      global.user_location = {latitude,longitude}
+      console.log({latitude,longitude })
+      if(onRoute) drawRouteFromUser(markers_data)
+
+    }
        )
     }
 
@@ -101,7 +109,6 @@ export default function UserMainScreen() {
 
 
   const removeItem = (id) => {
-
     const filteredData = markers_data.filter((item) => item.id !== id);
     setmarkers_data(filteredData);
     drawRoute(filteredData)
@@ -139,25 +146,52 @@ export default function UserMainScreen() {
   }
 
   function addToFlatlist(id, altitude, longitute, name) {
+   
     var arr1 = [...markers_data, { "id": id, "point": { lon: parseFloat(altitude), lat: parseFloat(longitute) }, "name": name }]
     setmarkers_data(arr1)
     drawRoute(arr1)
+  
+
   }
 
-  function drawRoute(points) {
-    if (points.length > 1) {
-      let route_points = []
-      points.map((val, index) => { route_points.push(val.point) })
+ async function  drawRouteFromUser(points) {
+    console.error(global.user_location.longitude)
+    if (points.length>0 && global.user_location.longitude!==undefined && global.user_location.latitude!==undefined){
+    let new_arr = [ { "point": point ={ lat: global.user_location.latitude, lon: global.user_location.longitude}},...points]
+    let route_points = []
+    await new_arr.map((val, index) => { route_points.push(val.point) })
       this.map.current.findRoutes(route_points, ['car'], function (a) {
         const arr = [];
         a.routes[0].sections.forEach(section =>
           section.points.forEach(point => arr.push(point)),
         );
         setRouting(arr);
-        console.error(arr)
+        console.error( a)
       })
     }
+    else {console.error('Попробуйте еще раз!')}
 
+  }
+
+  function clearRoute(){
+    let arr =[]
+    setRouting(arr)
+  }
+
+  function drawRoute(points) {
+  
+   if (points.length > 1) {   
+      let route_points = []
+      points.map((val, index) => { route_points.push(val.point) })
+      this.map.current.findRoutes(route_points, [global.route_type], function (a) {
+        const arr = [];
+        a.routes[0].sections.forEach(section =>
+          section.points.forEach(point => arr.push(point)),
+        );
+         setRouting(arr);
+      })
+    }
+     
   }
 
 
@@ -169,25 +203,32 @@ export default function UserMainScreen() {
 
         <YaMap
           ref={this.map}
-          showUserPosition
-          followUser
+          showUserPosition={true}
+          followUser={true}
+          userLocationIcon={{ uri: 'https://www.clipartmax.com/png/middle/180-1801760_pin-png.png' }}
           initialRegion={{
-            lat: location.coords.latitude,
-            lon: location.coords.longitude,
-            zoom: 1,
+            lat: 53.407163, 
+            lon: 58.980291,
+            zoom: 15,
             azimuth: 80,
             tilt: 100
           }}
+          setCenter={{ 
+            lon: user_location.longitude, 
+            lat: user_location.latitude, 
+            zoom: 10, 
+            azimuth: 0, 
+            tilt: 0,           
+          }}
           style={{ flex: 1, width: '100%', height: '100%' }}
         >
-          <Polyline points={routing} strokeColor={'red'} strokeWidth={4} />
-
           {
             data.map((val, index) => {
 
               return (
 
                 <Marker
+                  key={val.id}
                   onPress={() => {
                     console.log(val.address);
                     setDataToBottomSheet(val.id, val.altitude, val.longitute, val.name, val.address, val.working_time, val.image, val.website, val.phone);
@@ -224,30 +265,6 @@ export default function UserMainScreen() {
           <MagnifyingGlassCircleIcon color={'black'} size={widthPercentageToDP(12)} style={{ top: -4, right: -275 }} />
 
         </View>
-
-        <FlatList
-          data={markers_data}
-          extraData={markers_data}
-          vertical={true}
-          numColumns={2}
-          contentContainerStyle={{ alignSelf: 'flex-start' }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
-          renderItem={({ item, index }) => (
-
-            <TouchableOpacity onPress={() => removeItem(item.id)}>
-
-              <SelectedMarker id={index + 1} altitude={item.altitude} longitute={item.longitute} name={item.name} />
-
-            </TouchableOpacity>
-          )}
-
-        />
-
-
-
-
 
         <BottomSheetModal
           ref={bottomSheetRef}
@@ -287,14 +304,6 @@ export default function UserMainScreen() {
           </View>
         </BottomSheetModal>
 
-
-
-
-
-
-
-
-
       </BottomSheetModalProvider>
 
     )
@@ -306,18 +315,18 @@ export default function UserMainScreen() {
 
         <YaMap
           ref={this.map}
-          showUserPosition
+          showUserPosition={true}
           followUser
+          userLocationIcon={{ uri: 'https://www.clipartmax.com/png/middle/180-1801760_pin-png.png' }}
           initialRegion={{
-            lat: location.coords.latitude,
-            lon: location.coords.longitude,
-            zoom: 1,
+            lat: 53.407163, 
+            lon: 58.980291,
+            zoom: 15,
             azimuth: 80,
             tilt: 100
           }}
           style={{ flex: 1, width: '100%', height: '100%' }}
         >
-
           <Polyline points={routing} strokeColor={'red'} strokeWidth={4} />
 
           {
@@ -326,6 +335,7 @@ export default function UserMainScreen() {
               return (
 
                 <Marker
+                  key={val.id}
                   onPress={() => {
                     console.log(val.address);
                     setDataToBottomSheet(val.id, val.altitude, val.longitute, val.name, val.address, val.working_time, val.image, val.website, val.phone);
@@ -350,7 +360,9 @@ export default function UserMainScreen() {
         </TouchableOpacity>
 
 
-        <TouchableOpacity className="rounded-lg" style={{ width: 120, height: 50, backgroundColor: 'red', position: 'absolute' }}>
+        <TouchableOpacity
+        onPress={()=>{drawRouteFromUser(markers_data);setOnRoute(true)}}
+        className="rounded-lg" style={{ width: 120, height: 50, backgroundColor: 'red', position: 'absolute' }}>
           <Text>
             В путь
           </Text>
