@@ -15,12 +15,24 @@ class ObjectController{
     })
     } 
     
+    // async updateObject(req,res){
+    //     const { longitute, altitude, category, working_time, address, image, name, phone, website, id } = req.body
+    //     const sql = (
+    //         `update objects set longitute = ?, altitude = ?, category = ?, working_time = ?, address = ?, image = ?, name = ?, phone = ?, website = ? where id = ?;`
+    //     )
+    //     db.all(sql,[longitute, altitude, category, working_time, address, image, name, phone, website, id], (err,rows) => {
+    //         if (err) return res.json(err)
+    //         else return res.json(rows)
+    // })
+        
+    // }
+
     async updateObject(req,res){
-        const { longitute, altitude, category, working_time, address, image, name, phone, website, id } = req.body
+        const {  phone, id } = req.body
         const sql = (
-            `update objects set longitute = ?, altitude = ?, category = ?, working_time = ?, address = ?, image = ?, name = ?, phone = ?, website = ? where id = ?;`
+            `update objects set  phone = ? where id = ?;`
         )
-        db.all(sql,[longitute, altitude, category, working_time, address, image, name, phone, website, id], (err,rows) => {
+        db.all(sql,[ phone, id], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)
     })
@@ -30,7 +42,7 @@ class ObjectController{
     async deleteObject(req,res){
         const { id } = req.body
         const sql = (
-            `delete from objects where id = ?;`
+            `delete from objects where id = ${id};`
         )
         db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)

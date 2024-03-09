@@ -1,11 +1,13 @@
 import { SafeAreaView, StatusBar, View } from "react-native";
-import AppNavigation from "./navigation/navigation";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 import {useFonts} from 'expo-font';
 import { useCallback } from "react";
 import 'react-native-gesture-handler'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {enableLatestRenderer} from 'react-native-maps';
+import AppNavigation from "./navigation/navigation";
 
+enableLatestRenderer();
 
 
 export default function App() {
@@ -26,10 +28,8 @@ export default function App() {
     return null;
   }
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-       <View className="w-full h-full" >
-          <AppNavigation/>
-      </View>
+    <GestureHandlerRootView style={{ flex: 1 }} className="w-full h-full">
+       <AppNavigation/>
     </GestureHandlerRootView>
    
   );

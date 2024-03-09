@@ -3,6 +3,7 @@ const userRouter = require('./routes/user.routes')
 const objectRouter = require('./routes/object.routes')
 const reviewRouter = require('./routes/review.routes')
 const routeRouter = require('./routes/route.routes')
+const publicationsRouter = require('./routes/publications.routes')
 
 const bodyParser = require('body-parser');
 
@@ -15,7 +16,7 @@ app.use('/api',userRouter)
 app.use('/api',objectRouter)
 app.use('/api',reviewRouter)
 app.use('/api',routeRouter)
-
+app.use('/api',publicationsRouter)
 
 app.listen(PORT, () => console.log(`Сервер запущен с портом: ${PORT}`))
 
