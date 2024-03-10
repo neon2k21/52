@@ -3,6 +3,7 @@ import {View} from "react-native"
 import { ip_address } from "../config";
 import { FlatList } from "react-native-gesture-handler";
 import PublicationCard from "../components/publication/publicationCard";
+import { create } from "lodash";
 
 
 
@@ -95,3 +96,4 @@ export default function PublicationsScreen(){
         </View>
     )
 }
+const styles = StyleSheet.create({});
