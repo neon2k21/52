@@ -2,8 +2,13 @@ import { useCallback, useEffect, useState } from "react"
 import {View} from "react-native"
 import { ip_address } from "../../config";
 import { FlatList } from "react-native-gesture-handler";
+<<<<<<< HEAD:mob/screens/publications/Publications.js
 import PublicationCard from "../../components/publication/publicationCard";
 import { useFocusEffect } from "@react-navigation/core";
+=======
+import PublicationCard from "../components/publication/publicationCard";
+import { create } from "lodash";
+>>>>>>> 4518346e2f62371751e87aab1bcffffc35d72e61:mob/screens/Publications.js
 
 
 
@@ -96,3 +101,4 @@ export default function PublicationsScreen(){
         </View>
     )
 }
+const styles = StyleSheet.create({});
