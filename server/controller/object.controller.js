@@ -197,7 +197,6 @@ async function updateMark(db) {
     const all_objects = await getDataAllObjects(db)
 
     const total_marks = await getcountmarks(db)
-    console.log(total_marks)
    
     for(let j = 0; j < all_objects.rows.length; j++){
         var count = 0;
@@ -208,7 +207,6 @@ async function updateMark(db) {
                 marks_sum += Number(total_marks.rows[i].mark)
             }
         }
-        console.log(`marks_sum: ${marks_sum}, count: ${count}`)
         const reate = marks_sum/count
 
         await db.all(`update objects set rating=? where id=?;`, [reate, all_objects.rows[j].id])

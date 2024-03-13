@@ -161,7 +161,8 @@ const [review_data, setReview_data] = useState([])
 
   useFocusEffect(
     useCallback(()=>{
-
+      requestUserPermission()
+      NotificationListener()
       if(global.markers_data.length > 0){       
         setmarkers_data(global.markers_data)
         drawRoute(global.markers_data)
@@ -206,8 +207,7 @@ const [review_data, setReview_data] = useState([])
   )
 
     useEffect(()=>{
-      requestUserPermission()
-      NotificationListener()
+     
     },[])
 
   const startRouting = (user_location) =>{
@@ -258,8 +258,9 @@ const [review_data, setReview_data] = useState([])
   function addToFlatlist(id, altitude, longitute, name) {
     
     var arr1 = [...markers_data, { "id": id, "point": { longitude: parseFloat(altitude), latitude: parseFloat(longitute) }, "name": name }]
+    global.markers_data = arr1
     setmarkers_data(arr1)
-    drawRoute(markers_data)
+    drawRoute(arr1)
   }
 
 
@@ -562,7 +563,6 @@ const [review_data, setReview_data] = useState([])
                     global.object_sunday = val.sunday, 
                     global.object_rating = val.rating
                     getReviews(global.object_id)
-                   
                     handleSheetChanges()
                 }
                 }

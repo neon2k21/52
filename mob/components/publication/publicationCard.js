@@ -232,10 +232,10 @@ export default function PublicationCard(props){
     },[])
 
     const putImagesToArray =()=>{
-      let arr = []     
-      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image1).base64}`})
-      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2).base64}`})
-      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3).base64}`})
+      let arr = []
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image1)}`})
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2)}`})
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3)}`})
       setImages(arr)
 
     }

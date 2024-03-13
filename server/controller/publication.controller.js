@@ -240,7 +240,6 @@ async function getInfoforDeleteComments(db){
 
 async function countLikesAndLikes(db){
     const newObject = await getInfoForlikesAndComment(db)
-    console.warn(newObject.rows)
     for(let i = 0; i < newObject.rows.length;i++ ){
         const obj_likes = await countLikesForCurrentPublication(newObject.rows[i].id)
         const obj_comments = await countCommentsForCurrentPublication(newObject.rows[i].id)
@@ -257,7 +256,6 @@ async function countLikesForCurrentPublication(id){
             `SELECT COUNT(*) as count FROM Likes WHERE publication_id = ?;`,[id],(err, row) => {
             if (err) reject(err); // I assume this is how an error is thrown with your db callback
             resolve(row);
-            console.log(row)
         });
     });
 
@@ -270,7 +268,6 @@ async function countCommentsForCurrentPublication(id){
             `SELECT COUNT(*) as count FROM Comments WHERE publication_id = ?;`,[id],(err, row) => {
             if (err) reject(err); // I assume this is how an error is thrown with your db callback
             resolve(row);
-            console.log(row)
         });
     });
 }
@@ -284,7 +281,6 @@ async function getPubOwnerToken(pub_id){
             WHERE publications.id = ?;`,[pub_id],(err, row) => {
             if (err) reject(err); // I assume this is how an error is thrown with your db callback
             resolve(row);
-            console.log(row)
         });
     });
 }

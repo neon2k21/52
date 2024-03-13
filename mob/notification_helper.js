@@ -38,7 +38,7 @@ export async function requestUserPermission(){
     
         fetch(ip_address + '/setusertoken', requestOptions)
           .then(response => response.json())
-          .then(result => {})
+          .then(result => {console.log(result)})
           .catch(error => console.log('error', error));
           
     
@@ -47,7 +47,7 @@ export async function requestUserPermission(){
         try{
             const fcmtoken = await messaging().getToken();
             if(fcmtoken){
-              console.log(fcmtoken)
+              console.log('fcmtoken',fcmtoken)
                            sendToken(fcmtoken)
             }
             

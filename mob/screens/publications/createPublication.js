@@ -145,7 +145,9 @@ export default function CreatePublication() {
           redirect: 'follow'
          
         };
-    
+        console.log(image1.length)
+        console.log(image2.length)
+        console.log(image3.length)
         fetch(ip_address + '/createpublication', requestOptions)
           .then(response => response.json())
           .then(result => { console.log(result)})
@@ -159,14 +161,12 @@ export default function CreatePublication() {
 
     
     const addImage = async (base64) => {
-        if(image.length<3)
+        if(image.length<=2)
         { 
-            console.log(base64)
             setImage([...image, {"base64": base64[0].base64}])
-            console.log('image.length',image.length)
-            if(image.length==1) setImage1(base64[0].base64)
-            if(image.length==2) setImage2(base64[0].base64)
-            if(image.length==3) setImage3(base64[0].base64)
+            if(image.length==0) setImage1(base64[0].base64)
+            if(image.length==1) setImage2(base64[0].base64)
+            if(image.length==2) setImage3(base64[0].base64)
         }
         else return
      
@@ -217,7 +217,7 @@ export default function CreatePublication() {
             if(WaypointIDs[6]!=0) setobject_id_waypoint7(WaypointIDs[6])
             if(WaypointIDs[7]!=0) setobject_id_waypoint8(WaypointIDs[7])
             uploadRoute()
-            navigate('Публикации')
+            navigate('Карта')
             
     }
     
