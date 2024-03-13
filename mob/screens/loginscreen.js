@@ -143,7 +143,7 @@ export default function LoginScreen(){
   const {navigate} = useNavigation()
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
-    const [password2, setPassword2] = useState('');
+    const [nickname, setNickName] = useState('')
 
     const [activeTab, setActiveTab] = useState(1);
 
@@ -151,13 +151,14 @@ export default function LoginScreen(){
     const sendData = async () =>{
        
         if(activeTab==2){
-          if((password == password2) && password!=''){
+          if(password !=''&& login!=''&& nickname!=''){
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
+              "nickname": nickname.toLowerCase(),
               "login": login.toLowerCase(),
-              "password": password.toLowerCase()
+              "pass": password.toLowerCase()
             });
             
             var requestOptions = {
@@ -169,6 +170,8 @@ export default function LoginScreen(){
             
             fetch(ip_address+'/user', requestOptions)
               .then(response => response.json())
+              .then(async result => {
+                console.log(result)})
               .catch(error => console.log('error', error));
               Alert.alert('Вы успешно зарегистрировались!', '', [
                 {
@@ -178,26 +181,15 @@ export default function LoginScreen(){
               ]);
     
             }
-            if((password != password2) && password!='')
-            {
-              Alert.alert('Пароли не совпадают!', '', [
+            else{
+              Alert.alert('Ошибка!', '', [
                 {
-                  text: 'Ок',
-                  
+                  text: 'Проверьте данные!',
+                 
                 }
               ]);
             }
-            if((password == password2) )
-            {
-              Alert.alert('Заполните поля','',[
-                 {
-                          text: 'ОК'
-                        }
-              ]
-                      
-                       
-                       )  
-            }
+           
         }
         else{
           var myHeaders = new Headers();
@@ -206,8 +198,6 @@ export default function LoginScreen(){
         var raw = JSON.stringify({
           "login": login.toLowerCase(),
           "password": password.toLowerCase()
-          // "login": "user1",
-          // "password": "user1"
         });
         
         var requestOptions = {
@@ -219,13 +209,10 @@ export default function LoginScreen(){
         
         fetch(ip_address+'/getuser', requestOptions)
           .then(response => response.json())
-          .then(async result => {
+          .then(result => {
             console.log(result)
 
-            global.id = result[0].id
-            global.fio = result[0].fio
-            global.role = result[0].role
-            global.phone = result[0].phone
+            global.user_id = result[0].id
             if(result!="Данные не совпадают! Проверьте и повторите попытку") {
                 navigate('Главный экран')
             }
@@ -322,6 +309,16 @@ export default function LoginScreen(){
       <View style={styles.formcontainer}>
             <Image source={require('../assets/images/loginBlur.png')} style={styles.loginBlur}/>
             <Text style={styles.title}>вход</Text>
+            <Text  style={{}}>
+                никнейм
+              </Text>
+
+              <TextInput
+              style={{backgroundColor:'red'}}
+
+              onChangeText={setNickName}
+              value={nickname}
+              />
               <Text  style={styles.textLogin}>
                 Логин
               </Text>
@@ -341,17 +338,7 @@ export default function LoginScreen(){
               secureTextEntry={true}
               style={styles.textinputPassword}
               onChangeText={setPassword}
-              value={password}/>
-
-              <Text style={styles.textPassword}>
-                Подтверждение пароля
-              </Text>
-
-              <TextInput
-              secureTextEntry={true}
-              style={styles.textinputPassword}
-              onChangeText={setPassword2}
-              value={password2}/>
+              value={password}/>          
 
               <TouchableOpacity  style={styles.touchableopacity}  onPress={()=>{sendData();}}>
                 <Text style={styles.texttouchableopacity}>

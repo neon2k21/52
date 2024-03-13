@@ -5,8 +5,12 @@ const userController = require('../controller/user.controller')
 router.post('/user', userController.createUser)
 router.post('/getuser', userController.getUser)
 router.post('/getusernickname',userController.getUserNickName)
-router.post('/updateuser',userController.updateUser)
+router.post('/getuserlikes',userController.getLikedPubs)
+router.post('/getuserfavor',userController.getFavouriteObject)
 router.delete('/user', userController.deleteUser)
+router.put('/setusertoken', userController.setUserToken)
+
+
 
 module.exports = router
 

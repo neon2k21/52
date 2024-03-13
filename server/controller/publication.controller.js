@@ -1,5 +1,6 @@
 const db = require('../config')
-
+const { format } = require('date-fns');
+const { getMessaging }=require( "firebase-admin/messaging")
 
 
 class PublicationController{
@@ -43,6 +44,17 @@ class PublicationController{
 
     }
 
+    async getAllUserPublications(req,res){
+        const {id} = req.body
+        countLikesAndLikes(db)
+        const sql = (
+            `select * from publications where useradd=? `
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    }
 
     async getallpublicationbyfilter(req,res){
         // const { pass,id } = req.body
@@ -76,7 +88,19 @@ class PublicationController{
             if (err) return res.json(err)
             else res.json(rows)
          })
+
+        const likes = await getInfoforDeleteLikes(db)
         
+        for(let i = 0; i< likes.rows.length;i++ ){
+            await db.all(`delete from Likes where publication_id = ?;`, [id])
+        }
+
+        const comments = await getInfoforDeleteComments(db)
+        
+        for(let i = 0; i< comments.rows.length;i++ ){
+            await db.all(`delete from Comments where publication_id = ?;`, [id])
+        }
+
     } 
 
 
@@ -90,18 +114,23 @@ class PublicationController{
             else res.json(rows)
          })
         countLikesAndLikes(db)
+        sendNotifeIfLike(publication_id)
     } 
 
     async writecommentpublication(req,res){
+        const today = new Date();
+        const formattedToday = format(today, 'yyyy-MM-dd');
+
         const { useradd,text, publication_id } = req.body
         const sql = (
-            `insert into Comments (useradd, text) values (?, ?) where id =?;`
+            `insert into Comments (useradd, text, data, publication_id) values (?, ?, ?, ?);`
         )
-        db.all(sql,[useradd,text, publication_id], (err,rows) => {
+        db.all(sql,[useradd,text,formattedToday, publication_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
          })
         countLikesAndLikes(db)
+        sendNotifeIfComment(publication_id)
     } 
 
     async deletelikepublication(req,res){
@@ -127,7 +156,65 @@ class PublicationController{
          })
         
     } 
+
+    async getcommentsbypub(req, res){
+        const {id} = req.body
+        const sql = (
+            `select * from Comments where publication_id=? `
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+
+    }
+
 }
+
+
+async function getInfoforDeleteLikes(db){
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from Likes;`,(err, rows) => {
+            if (err) {
+                responseObj = {
+                  'error': err
+                };
+                reject(responseObj);
+              } else {
+                responseObj = {
+                  rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
+
+
+async function getInfoforDeleteComments(db){
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from Comments;`,(err, rows) => {
+            if (err) {
+                responseObj = {
+                  'error': err
+                };
+                reject(responseObj);
+              } else {
+                responseObj = {
+                  rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
+
 
  async function getInfoForlikesAndComment(db) {
 
@@ -188,6 +275,45 @@ async function countCommentsForCurrentPublication(id){
     });
 }
 
+async function getPubOwnerToken(pub_id){
+    return new Promise((resolve, reject) => {
+        db.get(
+            `SELECT users.token
+            FROM users
+            JOIN publications ON users.id = publications.useradd
+            WHERE publications.id = ?;`,[pub_id],(err, row) => {
+            if (err) reject(err); // I assume this is how an error is thrown with your db callback
+            resolve(row);
+            console.log(row)
+        });
+    });
+}
+
+async function sendNotifeIfLike(pub_id){
+    const receiveToken = await getPubOwnerToken(pub_id)
+    const message = {
+        notification:{
+            title: "Ваша публикация понравилась",
+            body: "Только что вашу публикацию оценили!",
+        },
+        token: receiveToken.token
+    }
+    getMessaging().send(message)
+   
+}
+
+async function sendNotifeIfComment(pub_id){
+    const receiveToken = await getPubOwnerToken(pub_id)
+    const message = {
+        notification:{
+            title: "Новый комментарий",
+            body: "Только что кто-то оставил новый комментарий!",
+        },
+        token: receiveToken.token
+    }
+    getMessaging().send(message)
+   
+}
 
 
 

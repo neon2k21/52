@@ -1,0 +1,16 @@
+global.object_id
+global.object_altitude 
+global.object_longitute 
+global.object_name 
+global.object_address  
+global.object_working_time 
+global.object_image 
+global.object_website 
+global.object_phone 
+global.object_monday 
+global.object_tuesday 
+global.object_wednesday 
+global.object_thursday 
+global.object_friday  
+global.object_saturday  
+global.object_sunday  

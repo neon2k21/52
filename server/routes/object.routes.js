@@ -8,6 +8,14 @@ router.post('/addnewobject', objectController.createObject)
 router.delete('/deleteobject', objectController.deleteObject)
 router.put('/updateobject', objectController.updateObject)
 router.post('/getcurrentobject', objectController.getCurrentObject)
+router.post('/addtofavor', objectController.addObjectToFavourite)
+router.delete('/deletefromfavor', objectController.deleteObjectToFavourite)
 
+
+router.post('/createreview', objectController.createReview)
+router.get('/getallreviews', objectController.getAllReviews)
+router.post('/getcurrentreview', objectController.getAllReviewsForCurrentObject)
+router.delete('/deletereview', objectController.deleteReview)
+router.put('/applyreview', objectController.applyReview)
 
 module.exports = router

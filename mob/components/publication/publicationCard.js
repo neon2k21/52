@@ -1,8 +1,9 @@
 import { useEffect,useState } from "react"
-import { Text, TouchableOpacity, View } from "react-native"
+import { FlatList, Text, TouchableOpacity, View,Image } from "react-native"
 import MapView from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { ip_address } from "../../config"
+import { useNavigation } from "@react-navigation/core"
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
@@ -10,6 +11,22 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 export default function PublicationCard(props){
 
     const [nickname, setNickName] = useState("")
+    const {navigate} = useNavigation()
+    const [images, setImages] = useState([])
+
+    let name_start = ''
+    let name_end = ''
+    let name_w1 = ''
+    let name_w2 = ''
+    let name_w3 = ''
+    let name_w4 = ''
+    let name_w5 = ''
+    let name_w6 = ''
+    let name_w7 = ''
+    let name_w8 = ''
+
+
+    const [waypointArr, setWaypointsArr] = useState([])
 
     // id: 5,
     // useradd: 1,
@@ -68,7 +85,84 @@ export default function PublicationCard(props){
 
 
     }
-    
+
+    const convertNames = () =>{
+      let arr = points_names.split(',')
+      if(arr.length == 2) {
+        name_start = arr[0]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 3) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 4) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 5) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 6) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_w4 = arr[4]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 7) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_w4 = arr[4]
+        name_w5 = arr[5]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 8) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_w4 = arr[4]
+        name_w5 = arr[5]
+        name_w6 = arr[6]
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 9) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_w4 = arr[4]
+        name_w5 = arr[5]
+        name_w6 = arr[6]        
+        name_w7 = arr[7]        
+        name_end = arr[arr.length-1]
+      }
+      if(arr.length == 10) {
+        name_start = arr[0]
+        name_w1 = arr[1]
+        name_w2 = arr[2]
+        name_w3 = arr[3]
+        name_w4 = arr[4]
+        name_w5 = arr[5]
+        name_w6 = arr[6]        
+        name_w7 = arr[7] 
+        name_w8 = arr[8] 
+        name_end = arr[arr.length-1]
+      }
+    }
+
+
     const pressLike=()=>{
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -94,9 +188,6 @@ export default function PublicationCard(props){
           .catch(error => console.log('error', error));
     }
 
-    const [waypointArr, setWaypointsArr] = useState([])
-    
-    
     const {
 
     id, 
@@ -137,13 +228,90 @@ export default function PublicationCard(props){
         
         convertWaypointToArray()
         getUserNickName(useradd)
-        
-
+        putImagesToArray()
     },[])
+
+    const putImagesToArray =()=>{
+      let arr = []     
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image1).base64}`})
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2).base64}`})
+      arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3).base64}`})
+      setImages(arr)
+
+    }
+
+
+
+    const prepareToRoute = ()=>{
+      convertNames()
+      let arr = []
+      arr.push({ 
+        "id": object_id_startPoint, 
+        "point": { longitude: JSON.parse(startpoint).longitude, latitude: JSON.parse(startpoint).latitude }, 
+        "name":  name_start
+      
+      })
+      if( object_id_waypoint1!==0) 
+      arr.push({ 
+        "id": object_id_waypoint1, 
+        "point": { longitude: JSON.parse(waypoint1).longitude, latitude: JSON.parse(waypoint1).latitude }, 
+        "name":  name_w1
+      })
+      if( object_id_waypoint2!==0) 
+      arr.push({ 
+        "id": object_id_waypoint2, 
+        "point": { longitude: JSON.parse(waypoint2).longitude, latitude: JSON.parse(waypoint2).latitude }, 
+        "name":  name_w2
+      })
+      if( object_id_waypoint3!==0) 
+      arr.push({ 
+        "id": object_id_waypoint3, 
+        "point": { longitude: JSON.parse(waypoint3).longitude, latitude: JSON.parse(waypoint3).latitude }, 
+        "name":  name_w3
+      })
+      if( object_id_waypoint4!==0) 
+      arr.push({ 
+        "id": object_id_waypoint4, 
+        "point": { longitude: JSON.parse(waypoint4).longitude, latitude: JSON.parse(waypoint4).latitude }, 
+        "name":  name_w4
+      })
+      if( object_id_waypoint5!==0) 
+      arr.push({ 
+        "id": object_id_waypoint5, 
+        "point": { longitude: JSON.parse(waypoint5).longitude, latitude: JSON.parse(waypoint5).latitude }, 
+        "name":  name_w5
+      })
+      if( object_id_waypoint6!==0) 
+      arr.push({ 
+        "id": object_id_waypoint6, 
+        "point": { longitude: JSON.parse(waypoint6).longitude, latitude: JSON.parse(waypoint6).latitude }, 
+        "name":  name_w6
+      })
+      if( object_id_waypoint7!==0) 
+      arr.push({ 
+        "id": object_id_waypoint7, 
+        "point": { longitude: JSON.parse(waypoint7).longitude, latitude: JSON.parse(waypoint7).latitude }, 
+        "name":  name_w7
+       })
+      if( object_id_waypoint8!==0) 
+      arr.push({ 
+        "id": object_id_waypoint8, 
+        "point": { longitude: JSON.parse(waypoint8).longitude, latitude: JSON.parse(waypoint8).latitude }, 
+        "name":  name_w8
+      })
+      arr.push({ 
+        "id": object_id_EndPoint, 
+        "point": { longitude: JSON.parse(endpoint).longitude, latitude: JSON.parse(endpoint).latitude }, 
+        "name":  name_end
+      
+      })
+      console.warn(arr)
+      global.markers_data = arr
+    }
+
 
     const convertWaypointToArray = () =>{
         const arr = []
-        console.error(typeof(object_id_waypoint1))
         if( object_id_waypoint1!==0) arr.push(JSON.parse(waypoint1))
         if( object_id_waypoint2!==0) arr.push(JSON.parse(waypoint2))
         if( object_id_waypoint3!==0) arr.push(JSON.parse(waypoint3))
@@ -153,7 +321,6 @@ export default function PublicationCard(props){
         if( object_id_waypoint7!==0) arr.push(JSON.parse(waypoint7))
         if( object_id_waypoint8!==0) arr.push(JSON.parse(waypoint8))
         setWaypointsArr(arr)
-      console.error(arr)
     }
 
     return(
@@ -189,13 +356,30 @@ export default function PublicationCard(props){
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>{}}>
-                             
-                <Text>
-                    Написать Комментарий
-                </Text>
+
+            <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
+              <Text>
+                перейти к маршруту
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
+              <Text>
+                Комментарий
+              </Text>
             </TouchableOpacity>
             
+            <FlatList
+            data={images}
+            extraData={images}
+            vertical={true}
+            contentContainerStyle={{backgroundColor:'red'}}       
+            renderItem={({item,index})=> (
+                        
+                 <Image style={{width: 120, height: 120}} source={{uri: item.uri}}/>
+           
+            )}
+            />
             <MapView
          initialRegion={{
            latitude: 53.407163, 
@@ -214,6 +398,8 @@ export default function PublicationCard(props){
               
              />
        </MapView>
+
+       
         </View>
     )
 

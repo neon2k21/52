@@ -1,4 +1,5 @@
 const db = require('../config')
+const { format } = require('date-fns');
 
 
 class ObjectController{
@@ -39,6 +40,29 @@ class ObjectController{
         
     }
 
+    async addObjectToFavourite(req,res){
+        const { object, user } = req.body
+        const sql = (
+            `insert into users_favourite_objects ( object_id, user ) values ( ?, ?);`
+        )
+        db.all(sql,[object, user], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    }
+
+    async deleteObjectToFavourite(req,res){
+        const { object, user } = req.body
+        const sql = (
+            `delete from  users_favourite_objects where object_id=? and user=?;`
+        )
+        db.all(sql,[object, user], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    }
+
+
     async deleteObject(req,res){
         const { id } = req.body
         const sql = (
@@ -66,7 +90,7 @@ class ObjectController{
     async getCurrentObject(req,res){
 
         const {id} = req.body
-       
+        updateMark(db)
         const sql = 
             `SELECT * from objects WHERE  id= ?;`
 
@@ -74,8 +98,145 @@ class ObjectController{
             if (err) return res.json(err)
             else return res.json(rows)
        })
+       
     }
 
+
+
+    async createReview(req,res){
+
+        const today = new Date();
+        const formattedToday = format(today, 'yyyy-MM-dd');
+      
+        const {  user, object, comment, mark, image1, image2, image3 } = req.body
+        const sql = (
+            `insert into Review ( user, object, comment, mark, image1, image2, image3, data ) values (?, ?, ?, ?, ?, ?, ?, ?);`
+        )
+        db.all(sql,[user, object, comment, mark, image1, image2, image3, formattedToday], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    updateMark(db)
+    } 
+
+
+    async getAllReviewsForCurrentObject(req,res){
+        updateMark(db)
+        const {id} = req.body
+        const sql = (
+            `select * from Review where object=?;`
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    } 
+
+
+    async getAllReviews(req,res){
+        updateMark(db)
+        const sql = (
+            `select * from Review;`
+        )
+        db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    } 
+    
+    async applyReview(req,res){
+        const { id } = req.body
+        const sql = (
+            `update Review set checked = 1 where id = ?;`
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+        
+    }
+
+    async deleteReview(req,res){
+        const { id } = req.body
+        const sql = (
+            `delete from Review where id = ?;`
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    updateMark(db)        
+    }
+
+
+
 }
+
+async function getDataAllObjects(db){
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from objects;`,(err, rows) => {
+            if (err) {
+                responseObj = {
+                  'error': err
+                };
+                reject(responseObj);
+              } else {
+                responseObj = {
+                  rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+}
+
+
+
+async function updateMark(db) {
+    const all_objects = await getDataAllObjects(db)
+
+    const total_marks = await getcountmarks(db)
+    console.log(total_marks)
+   
+    for(let j = 0; j < all_objects.rows.length; j++){
+        var count = 0;
+        let marks_sum = 0
+        for(let i = 0; i < total_marks.rows.length; i++ ){
+            if(total_marks.rows[i].object === all_objects.rows[j].id) {
+                count++;
+                marks_sum += Number(total_marks.rows[i].mark)
+            }
+        }
+        console.log(`marks_sum: ${marks_sum}, count: ${count}`)
+        const reate = marks_sum/count
+
+        await db.all(`update objects set rating=? where id=?;`, [reate, all_objects.rows[j].id])
+    }
+    
+   
+
+
+}
+
+async function getcountmarks(db) {
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from Review;`,(err, rows) => {
+            if (err) {
+                responseObj = {
+                  'error': err
+                };
+                reject(responseObj);
+              } else {
+                responseObj = {
+                  rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+}
+
 
 module.exports = new ObjectController()
