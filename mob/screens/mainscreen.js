@@ -425,7 +425,7 @@ const [review_data, setReview_data] = useState([])
           >
 
            
-          <View style={styles.contentContainer}>
+          <View style={{backgroundColor:'red'}}>
             
           <RatingBar
           initialRating={global.object_rating}
@@ -442,22 +442,22 @@ const [review_data, setReview_data] = useState([])
         />
          
                       
-            <Text> { global.object_id} </Text>
+            
             <Text> {global.object_altitude} </Text>
             <Text> { global.object_longitute} </Text>
             <Text> {global.object_name} </Text>
             <Text> { global.object_address} </Text>
             <Text> {global.object_working_time} </Text>
-            <Text> { global.object_image} </Text>
+            <Image source={{uri: global.object_image}} style={{width:120,height:120}}/>
             <Text> { global.object_website} </Text>
             <Text> {  global.object_phone} </Text>
-            <Text> {global.object_monday} </Text>
-            <Text> {global.object_tuesday} </Text>
-            <Text> {global.object_wednesday} </Text>
-            <Text> { global.object_thursday} </Text>
-            <Text> {  global.object_friday} </Text>
-            <Text> {   global.object_saturday} </Text>
-            <Text> {   global.object_sunday} </Text>
+            <Text> ПН: {global.object_monday} </Text>
+            <Text> ВТ: {global.object_tuesday} </Text>
+            <Text> СР: {global.object_wednesday} </Text>
+            <Text> ЧТ: {global.object_thursday} </Text>
+            <Text> ПТ: {global.object_friday} </Text>
+            <Text> СБ: {global.object_saturday} </Text>
+            <Text> ВС: {global.object_sunday} </Text>
 
 
 

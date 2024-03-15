@@ -78,6 +78,7 @@ export default function LikesScreen(){
     fetch(ip_address + '/getuserlikes', requestOptions)
       .then(response => response.json())
       .then(result => {
+        console.log(result)
         setLikedPubs(result)
       })
       .catch(error => console.log('error', error));

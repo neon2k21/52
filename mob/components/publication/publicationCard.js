@@ -4,6 +4,7 @@ import MapView from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { ip_address } from "../../config"
 import { useNavigation } from "@react-navigation/core"
+import { HeartIcon,ChatBubbleBottomCenterIcon } from "react-native-heroicons/outline"
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
@@ -13,6 +14,9 @@ export default function PublicationCard(props){
     const [nickname, setNickName] = useState("")
     const {navigate} = useNavigation()
     const [images, setImages] = useState([])
+    const [distance, setDistance] = useState("")
+    const [time, setTime]= useState("")
+
 
     let name_start = ''
     let name_end = ''
@@ -28,37 +32,6 @@ export default function PublicationCard(props){
 
     const [waypointArr, setWaypointsArr] = useState([])
 
-    // id: 5,
-    // useradd: 1,
-    // name: '8',
-    // points_names: 'Alibi, Музей Истории Магнитостроя',
-    // review: '',
-    // likes_count: 0,
-    // comments_count: 0,
-    // checked: 0,
-    // image1: 'image1',
-    // image2: 'image2',
-    // image3: 'image3',
-    // startpoint: '{"longitude":58.961067,"latitude":53.407791}',
-    // endpoint: '{"longitude":58.96259139441874,"latitude":53.39532632095306}',
-    // waypoint1: null,
-    // waypoint2: null,
-    // waypoint3: null,
-    // waypoint4: null,
-    // waypoint5: null,
-    // waypoint6: null,
-    // waypoint7: null,
-    // waypoint8: null,
-    // object_id_startPoint: 54,
-    // object_id_EndPoint: 25,
-    // object_id_waypoint1: 0,
-    // object_id_waypoint2: 0,
-    // object_id_waypoint3: 0,
-    // object_id_waypoint4: 0,
-    // object_id_waypoint5: 0,
-    // object_id_waypoint6: 0,
-    // object_id_waypoint7: 0,
-    // object_id_waypoint8: 0
 
     const getUserNickName = (id) =>{
         var myHeaders = new Headers();
@@ -168,7 +141,7 @@ export default function PublicationCard(props){
         myHeaders.append("Content-Type", "application/json");
     
         var raw = JSON.stringify({
-          "useradd": 1,
+          "useradd": global.user_id,
           "publication_id": id
         });
     
@@ -324,82 +297,98 @@ export default function PublicationCard(props){
     }
 
     return(
-        <View style={{width:'100%',height:'70%'}}>
-            <Text>
+        <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
+            <Text className="text-2xl">
                 {nickname}
             </Text>
             <Text>
-                {id}
+                Описание: {review}
             </Text>
             <Text>
-                {startpoint}
+               Основные точки маршрута: {points_names}
             </Text>
             <Text>
-                {review}
+               Длительность маршрута: {distance} км.
             </Text>
             <Text>
-                {points_names}
+              Время прохождения маршрута: {time} 
             </Text>
-            <Text>
-            {likes_count}
-            </Text>
-            <Text>
-            {comments_count}
-            </Text>
-            <Text>
-            {checked}
-            </Text>
-            <TouchableOpacity onPress={()=>{pressLike()}}>
-                             
-                <Text>
-                    поставить лайк
-                </Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
-              <Text>
-                перейти к маршруту
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
-              <Text>
-                Комментарий
-              </Text>
-            </TouchableOpacity>
             
-            <FlatList
-            data={images}
-            extraData={images}
-            vertical={true}
-            contentContainerStyle={{backgroundColor:'red'}}       
-            renderItem={({item,index})=> (
-                        
-                 <Image style={{width: 120, height: 120}} source={{uri: item.uri}}/>
-           
-            )}
-            />
-            <MapView
-         initialRegion={{
-           latitude: 53.407163, 
-           longitude: 58.980291,
-           latitudeDelta: 0.0922,
-           longitudeDelta: 0.0421,
-         }}
-         style={{width: '100%', height: '40%' }}
-       >
+            
+            
           
-        <MapViewDirections
-               origin={JSON.parse(startpoint)}
-               waypoints={waypointArr}
-               destination={JSON.parse(endpoint)}
-               apikey={GOOGLE_MAPS_APIKEY}
-              
-             />
-       </MapView>
-
-       
+            <MapView
+                    initialRegion={{
+                      latitude: 53.407163, 
+                      longitude: 58.980291,
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}
+                    showsPointsOfInterest={false}
+                    showsIndoors={false}
+                    toolbarEnabled={false}
+                    showsUserLocation
+                    mapType='terrain'        
+                    style={{width: '100%', height: '25%',borderRadius:100,padding:10 }}
+                    className="rounded-2xl"
+                  >
+                      
+                    <MapViewDirections
+                          origin={JSON.parse(startpoint)}
+                          waypoints={waypointArr}
+                          destination={JSON.parse(endpoint)}
+                          apikey={GOOGLE_MAPS_APIKEY}
+                          onReady={result=>{
+                            setDistance(result.distance)
+                            setTime(result.duration)
+                            if(result.distance == "") setOnRoute(false)
+                            console.log('distanse',distance,"time",time)}}
+                        />
+                </MapView>
+                     
+                        
+                        
+                        <FlatList
+                        data={images}
+                        extraData={images}
+                        horizontal={true}
+                        contentContainerStyle={{backgroundColor:'gray',paddingHorizontal:10}}       
+                        renderItem={({item,index})=> (
+                                    
+                            <Image style={{width: 200, height: 150}} source={{uri: item.uri}} className="rounded-xl"/>
+                      
+                        )}
+                        />
+                        <View className="flex-row">
+                        <View className="flex-row" style={{paddingHorizontal:10}}>
+                              <Text>
+                              {likes_count}
+                                </Text>
+                              <TouchableOpacity onPress={()=>{pressLike()}}>
+                             
+                                 <HeartIcon size={24} color={'black'}/>
+                              </TouchableOpacity>
+                        </View>
+                        <View className="flex-row" style={{paddingHorizontal:10}}>
+                              <Text>
+                              {comments_count}
+                                </Text>
+                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
+                           <ChatBubbleBottomCenterIcon color={'black'} size={24}/>
+                         </TouchableOpacity>  
+                              
+                        </View>
+             
+             
+                         <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
+                           <Text>
+                             перейти к маршруту
+                           </Text>
+                         </TouchableOpacity>
+                        </View>
+                        
+             
+                              
         </View>
     )
 

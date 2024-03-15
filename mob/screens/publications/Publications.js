@@ -31,6 +31,7 @@ export default function PublicationsScreen(){
           .then(response => response.json())
           .then(result => {
             setData(result)
+            console.log('result',result)
             
           })
           .catch(error => console.log('error', error));
@@ -45,12 +46,12 @@ export default function PublicationsScreen(){
     
     
     return(
-        <View>
+        <View style={{height:'100%', width:'100%', backgroundColor:'green'}}>
            <FlatList
           data={data}
           extraData={data}
           vertical={true}
-          contentContainerStyle={{ alignSelf: 'flex-start',paddingBottom:4000 }}
+          contentContainerStyle={{ paddingBottom:4000 }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item, index }) => (
