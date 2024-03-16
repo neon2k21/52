@@ -1,9 +1,9 @@
-import { useEffect,useState } from "react"
+import { useCallback, useEffect,useState } from "react"
 import { FlatList, Text, TouchableOpacity, View,Image } from "react-native"
 import MapView from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { ip_address } from "../../config"
-import { useNavigation } from "@react-navigation/core"
+import { useFocusEffect, useNavigation } from "@react-navigation/core"
 import { HeartIcon,ChatBubbleBottomCenterIcon } from "react-native-heroicons/outline"
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
@@ -13,7 +13,7 @@ export default function PublicationCard(props){
 
     const [nickname, setNickName] = useState("")
     const {navigate} = useNavigation()
-    const [images, setImages] = useState([])
+    const [images, setImages] = useState([{uri: `data:image/jpeg;base64,`},{uri: `data:image/jpeg;base64,`},{uri: `data:image/jpeg;base64,`}])
     const [distance, setDistance] = useState("")
     const [time, setTime]= useState("")
 
@@ -197,12 +197,12 @@ export default function PublicationCard(props){
 
     } = props
 
-    useEffect(()=>{
-        
-        convertWaypointToArray()
+    useFocusEffect(useCallback(()=>{
+      convertWaypointToArray()
         getUserNickName(useradd)
         putImagesToArray()
-    },[])
+    },[]))
+    
 
     const putImagesToArray =()=>{
       let arr = []
@@ -210,7 +210,7 @@ export default function PublicationCard(props){
       arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2)}`})
       arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3)}`})
       setImages(arr)
-
+      console.log(images)
     }
 
 
@@ -295,8 +295,8 @@ export default function PublicationCard(props){
         if( object_id_waypoint8!==0) arr.push(JSON.parse(waypoint8))
         setWaypointsArr(arr)
     }
-
-    return(
+    if(images[0].uri!="data:image/jpeg;base64,"){
+      return(
         <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
             <Text className="text-2xl">
                 {nickname}
@@ -391,5 +391,92 @@ export default function PublicationCard(props){
                               
         </View>
     )
-
+    }
+    else {
+      return(
+        <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
+            <Text className="text-2xl">
+                {nickname}
+            </Text>
+            <Text>
+                Описание: {review}
+            </Text>
+            <Text>
+               Основные точки маршрута: {points_names}
+            </Text>
+            <Text>
+               Длительность маршрута: {distance} км.
+            </Text>
+            <Text>
+              Время прохождения маршрута: {time} 
+            </Text>
+            
+            
+            
+          
+            <MapView
+                    initialRegion={{
+                      latitude: 53.407163, 
+                      longitude: 58.980291,
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}
+                    showsPointsOfInterest={false}
+                    showsIndoors={false}
+                    toolbarEnabled={false}
+                    showsUserLocation
+                    mapType='terrain'        
+                    style={{width: '100%', height: '25%',borderRadius:100,padding:10 }}
+                    className="rounded-2xl"
+                  >
+                      
+                    <MapViewDirections
+                          origin={JSON.parse(startpoint)}
+                          waypoints={waypointArr}
+                          destination={JSON.parse(endpoint)}
+                          apikey={GOOGLE_MAPS_APIKEY}
+                          onReady={result=>{
+                            setDistance(result.distance)
+                            setTime(result.duration)
+                            if(result.distance == "") setOnRoute(false)
+                            console.log('distanse',distance,"time",time)}}
+                        />
+                </MapView>
+                     
+                        
+                        
+                        
+                        <View className="flex-row">
+                        <View className="flex-row" style={{paddingHorizontal:10}}>
+                              <Text>
+                              {likes_count}
+                                </Text>
+                              <TouchableOpacity onPress={()=>{pressLike()}}>
+                             
+                                 <HeartIcon size={24} color={'black'}/>
+                              </TouchableOpacity>
+                        </View>
+                        <View className="flex-row" style={{paddingHorizontal:10}}>
+                              <Text>
+                              {comments_count}
+                                </Text>
+                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
+                           <ChatBubbleBottomCenterIcon color={'black'} size={24}/>
+                         </TouchableOpacity>  
+                              
+                        </View>
+             
+             
+                         <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
+                           <Text>
+                             перейти к маршруту
+                           </Text>
+                         </TouchableOpacity>
+                        </View>
+                        
+             
+                              
+        </View>
+    )
+    }
 }

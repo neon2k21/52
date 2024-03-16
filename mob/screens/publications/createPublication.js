@@ -16,8 +16,7 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 export default function CreatePublication() {
 
     const {navigate} = useNavigation()
-
-   global.user_id = 1
+    const navigation = useNavigation()
 
    const [imageFlatlist, setImageFlatList] = useState([])
 
@@ -145,13 +144,12 @@ export default function CreatePublication() {
           redirect: 'follow'
          
         };
-        console.log(image1.length)
-        console.log(image2.length)
-        console.log(image3.length)
+
         fetch(ip_address + '/createpublication', requestOptions)
           .then(response => response.json())
           .then(result => { console.log(result)})
           .catch(error => console.log('error', error));
+            navigation.goBack()
         }
         if(name=="" && comment !== ""){
             alert('Укажите наименование публикации')
@@ -303,9 +301,11 @@ export default function CreatePublication() {
                 </Text>
             </TouchableOpacity>
            
-            <Text>
-                Отмена
-            </Text> 
+            <TouchableOpacity onPress={()=>{navigation.goBack()}}>
+                <Text>
+                    Отмена
+                </Text>
+            </TouchableOpacity>
         </View>
     )
 
