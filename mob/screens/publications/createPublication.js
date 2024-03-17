@@ -18,8 +18,6 @@ export default function CreatePublication() {
     const {navigate} = useNavigation()
     const navigation = useNavigation()
 
-   const [imageFlatlist, setImageFlatList] = useState([])
-
     const mapRef = useRef()
 
    
@@ -176,7 +174,7 @@ export default function CreatePublication() {
         launchImageLibrary({
             mediaType: 'photo',
             includeBase64: true,
-           
+            quality: 0.5
            },response => {
             if(response.didCancel){
                     console.log("отмена")

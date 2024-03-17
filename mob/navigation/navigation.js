@@ -6,25 +6,16 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import UserMainScreen from '../screens/mainscreen';
 import PublicationsScreen from '../screens/publications/Publications';
 import CreateReview from '../screens/review/createReview';
-import PubsScreen from '../screens/profile/mypubs'
-import LikesScreen from '../screens/profile/mylikes'
 import CommentScreen from '../screens/publications/commentscreen';
 import LoginScreen from '../screens/loginscreen';
+import Profile from '../screens/profile/profile'
 
 const Login_Stack = createNativeStackNavigator()
 const Publication_Stack = createNativeStackNavigator()
 const MainScreen_Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
-const profile_stack = createMaterialTopTabNavigator();
 
-function Profile_stacknavigator(){
-  return(
-    <profile_stack.Navigator>
-      <profile_stack.Screen name="мои записи" component={PubsScreen}/>
-      <profile_stack.Screen name = "понравившиеся" component={LikesScreen}/>
-    </profile_stack.Navigator>
-  )
-}
+
 
 
 function Bottom_stacknavigator(){
@@ -32,7 +23,7 @@ return(
   <Tab.Navigator>
     <Tab.Screen name = "Карта" options={{headerShown: false}} component={MainScreen_StackNavigator}/>
     <Tab.Screen name = "Публикации" options={{headerShown: false}} component={Publication_stacknavigator}/>
-    <Tab.Screen name = "Профиль" options={{headerShown: false}} component={Profile_stacknavigator}/>
+    <Tab.Screen name = "Профиль"  component={Profile}/>
   </Tab.Navigator>
 )
   

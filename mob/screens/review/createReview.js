@@ -94,7 +94,7 @@ export default function CreateReview() {
       launchImageLibrary({
           mediaType: 'photo',
           includeBase64: true,
-         
+          quality: 0.5
          },response => {
           if(response.didCancel){
                   console.log("отмена")

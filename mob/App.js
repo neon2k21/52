@@ -13,7 +13,7 @@ import { NotificationListener, requestUserPermission } from "./notification_help
 enableLatestRenderer();
 firebase.initializeApp(firebaseConfig)
 
-
+global.userNickName = ''
 global.markers_data = []
 global.route_type='WALKING'
 

@@ -211,7 +211,8 @@ export default function LoginScreen(){
           .then(response => response.json())
           .then(result => {
             console.log(result)
-
+            
+            global.userNickName = result[0].nickname
             global.user_id = result[0].id
             if(result!="Данные не совпадают! Проверьте и повторите попытку") {
                 navigate('Главный экран')
