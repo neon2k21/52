@@ -39,9 +39,7 @@ export default function PublicationsScreen(){
       }
 
 
-      useFocusEffect(
-        useCallback(()=>{getAllpubs()},[])
-      )
+      useFocusEffect(useCallback(()=>{getAllpubs()},[]))
     
     
     

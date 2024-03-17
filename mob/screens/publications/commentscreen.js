@@ -81,7 +81,7 @@ export default function CommentScreen(){
           renderItem={({ item}) => (
 
 
-              <Comment  userid={item.useradd} date={item.data} comment={item.text} id={item.id}   />
+              <Comment userid={item.useradd} date={item.data} comment={item.text} id={item.id}   />
 
           )}
 

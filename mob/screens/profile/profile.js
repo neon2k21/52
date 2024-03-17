@@ -23,7 +23,7 @@ export  default function Profile(){
                   
                 <TouchableOpacity>
                     <Text>
-                        Привет, {global.userNickName}
+                        Привет, {global.userNickName} {global.user_avatar}
                     </Text>
                 </TouchableOpacity>
                 

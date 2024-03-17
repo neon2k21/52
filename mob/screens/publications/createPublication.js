@@ -106,7 +106,7 @@ export default function CreatePublication() {
     
         var raw = JSON.stringify({
             "useradd": global.user_id, 
-            "name":name,
+            "name":    global.userNickName,
             "points_names":waypointNames, 
             "review":comment,  
             "image1": JSON.stringify(image1), 
@@ -174,7 +174,7 @@ export default function CreatePublication() {
         launchImageLibrary({
             mediaType: 'photo',
             includeBase64: true,
-            quality: 0.5
+            quality: 0.01
            },response => {
             if(response.didCancel){
                     console.log("отмена")

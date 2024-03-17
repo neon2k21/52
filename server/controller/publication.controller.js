@@ -44,6 +44,18 @@ class PublicationController{
 
     }
 
+    async getCurrentPub(req, res){
+        countLikesAndLikes(db)
+        const {id} = req.body
+        const sql = (
+            `select * from publications where id=?`
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+    })
+    }
+
     async getAllUserPublications(req,res){
         const {id} = req.body
         countLikesAndLikes(db)

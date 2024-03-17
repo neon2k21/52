@@ -214,6 +214,7 @@ export default function LoginScreen(){
             
             global.userNickName = result[0].nickname
             global.user_id = result[0].id
+            global.user_avatar = result[0].avatar
             if(result!="Данные не совпадают! Проверьте и повторите попытку") {
                 navigate('Главный экран')
             }

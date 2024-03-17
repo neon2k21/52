@@ -11,11 +11,48 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
 export default function PublicationCard(props){
 
-    const [nickname, setNickName] = useState("")
+  const {
+
+    id, 
+    useradd, 
+    name, 
+    points_names,
+    review, 
+    likes_count, 
+    comments_count,
+    checked, 
+    image1, 
+    image2, 
+    image3,
+    startpoint,
+    endpoint,
+    waypoint1,
+    waypoint2,
+    waypoint3,
+    waypoint4,
+    waypoint5,
+    waypoint6,
+    waypoint7,
+    waypoint8,
+    object_id_startPoint,
+    object_id_EndPoint,
+    object_id_waypoint1,
+    object_id_waypoint2,
+    object_id_waypoint3,
+    object_id_waypoint4,
+    object_id_waypoint5,
+    object_id_waypoint6,
+    object_id_waypoint7,
+    object_id_waypoint8
+
+    } = props
+    
     const {navigate} = useNavigation()
     const [images, setImages] = useState([{uri: `data:image/jpeg;base64,`},{uri: `data:image/jpeg;base64,`},{uri: `data:image/jpeg;base64,`}])
     const [distance, setDistance] = useState("")
     const [time, setTime]= useState("")
+    const [likes,setLikes] = useState(likes_count)
+    
 
 
     let name_start = ''
@@ -33,31 +70,7 @@ export default function PublicationCard(props){
     const [waypointArr, setWaypointsArr] = useState([])
 
 
-    const getUserNickName = (id) =>{
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-    
-        var raw = JSON.stringify({
-          "id": id
-        });
-    
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
-        };
-    
-        fetch(ip_address + '/getusernickname', requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            setNickName(result[0].nickname)
-            
-          })
-          .catch(error => console.log('error', error));
-
-
-    }
+   
 
     const convertNames = () =>{
       let arr = points_names.split(',')
@@ -155,54 +168,47 @@ export default function PublicationCard(props){
         fetch(ip_address + '/putlikepublication', requestOptions)
           .then(response => response.json())
           .then(result => {
-            setNickName(result)
-            
+            getCurrentPub()
           })
           .catch(error => console.log('error', error));
     }
 
-    const {
+    const getCurrentPub=()=>{
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+  
+      var raw = JSON.stringify({
+          "id": id
+      });
+  
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      fetch(ip_address + '/getCurrentPub', requestOptions)
+        .then(response => response.json())
+        .then(result => {
+        setLikes(result[0].likes_count)
+        })
+        .catch(error => console.log('error', error));
+    }
 
-    id, 
-    useradd, 
-    name, 
-    points_names,
-    review, 
-    likes_count, 
-    comments_count,
-    checked, 
-    image1, 
-    image2, 
-    image3,
-    startpoint,
-    endpoint,
-    waypoint1,
-    waypoint2,
-    waypoint3,
-    waypoint4,
-    waypoint5,
-    waypoint6,
-    waypoint7,
-    waypoint8,
-    object_id_startPoint,
-    object_id_EndPoint,
-    object_id_waypoint1,
-    object_id_waypoint2,
-    object_id_waypoint3,
-    object_id_waypoint4,
-    object_id_waypoint5,
-    object_id_waypoint6,
-    object_id_waypoint7,
-    object_id_waypoint8
-
-    } = props
+   
 
     useFocusEffect(useCallback(()=>{
-      convertWaypointToArray()
-        getUserNickName(useradd)
+        convertWaypointToArray()
         putImagesToArray()
+        
+        
     },[]))
     
+    useEffect(()=>{
+      setLikes(likes_count)
+    },[])
+ 
 
     const putImagesToArray =()=>{
       let arr = []
@@ -210,7 +216,6 @@ export default function PublicationCard(props){
       arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2)}`})
       arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3)}`})
       setImages(arr)
-      console.log(images)
     }
 
 
@@ -278,7 +283,7 @@ export default function PublicationCard(props){
         "name":  name_end
       
       })
-      console.warn(arr)
+
       global.markers_data = arr
     }
 
@@ -299,7 +304,7 @@ export default function PublicationCard(props){
       return(
         <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
             <Text className="text-2xl">
-                {nickname}
+                {name}
             </Text>
             <Text>
                 Описание: {review}
@@ -342,7 +347,7 @@ export default function PublicationCard(props){
                             setDistance(result.distance)
                             setTime(result.duration)
                             if(result.distance == "") setOnRoute(false)
-                            console.log('distanse',distance,"time",time)}}
+                            }}
                         />
                 </MapView>
                      
@@ -362,7 +367,7 @@ export default function PublicationCard(props){
                         <View className="flex-row">
                         <View className="flex-row" style={{paddingHorizontal:10}}>
                               <Text>
-                              {likes_count}
+                              {likes}
                                 </Text>
                               <TouchableOpacity onPress={()=>{pressLike()}}>
                              
@@ -396,7 +401,7 @@ export default function PublicationCard(props){
       return(
         <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
             <Text className="text-2xl">
-                {nickname}
+                {name}
             </Text>
             <Text>
                 Описание: {review}
@@ -439,7 +444,7 @@ export default function PublicationCard(props){
                             setDistance(result.distance)
                             setTime(result.duration)
                             if(result.distance == "") setOnRoute(false)
-                            console.log('distanse',distance,"time",time)}}
+                           }}
                         />
                 </MapView>
                      
@@ -449,7 +454,7 @@ export default function PublicationCard(props){
                         <View className="flex-row">
                         <View className="flex-row" style={{paddingHorizontal:10}}>
                               <Text>
-                              {likes_count}
+                              {likes}
                                 </Text>
                               <TouchableOpacity onPress={()=>{pressLike()}}>
                              
