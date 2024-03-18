@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {View, FlatList, TouchableOpacity, Text} from "react-native"
 import { ip_address } from "../../config";
 import PublicationCard from "../../components/publication/publicationCard";
@@ -122,24 +122,25 @@ export default function PublicationsScreen(){
     
       }
 
-    
+    useEffect(()=>{},[])
 
-      useFocusEffect(useCallback(()=>{
-        getAllpubs()
+      useFocusEffect(useCallback(()=>{ 
         getAllFilters()
+        getAllpubs()
+       
       },[]))
     
     
     
     return(
-        <View style={{height:'100%', width:'100%', backgroundColor:'green'}}>
+        <View style={{height:'100%', width:'100%'}}>
          <FlatList
             data={tags}
             vertical={true} 
             numColumns={3}       
             renderItem={({item})=> ( 
                 
-              <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{selectTag(item.id);}}>
+              <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{selectTag(item.id)}}>
               <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
                   <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
                           <Text>
