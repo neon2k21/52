@@ -7,6 +7,7 @@ import MapViewDirections from "react-native-maps-directions";
 import { ip_address } from "../../config";
 import {decode as atob, encode as btoa} from 'base-64'
 import { useNavigation } from "@react-navigation/core";
+import Publication_Tag from "../../components/publication/publication_tag";
 
 
 
@@ -53,10 +54,33 @@ export default function CreatePublication() {
     const [object_id_waypoint7,setobject_id_waypoint7] = useState(0)
     const [object_id_waypoint8,setobject_id_waypoint8] = useState(0)
 
+    const [tags, setTags] = useState([])
+
+    
+
+    function getAllFilters(){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        
+    
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        fetch(ip_address + '/getAllfilters', requestOptions)
+          .then(response => response.json())
+          .then(result => {setTags(result)})
+          .catch(error => console.log('error', error));
+           
+    }
 
     useEffect(()=>{
         drawRoute(global.route_to_publicate)
         getMarkersNames(global.waypointNames)
+        getAllFilters()
     },[])
 
     function getMarkersNames(data){
@@ -101,7 +125,7 @@ export default function CreatePublication() {
 
     const uploadRoute = () =>{
         if(name != ""){
-            var myHeaders = new Headers();
+        var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
     
         var raw = JSON.stringify({
@@ -131,7 +155,14 @@ export default function CreatePublication() {
             "object_id_waypoint5":object_id_waypoint5, 
             "object_id_waypoint6":object_id_waypoint6, 
             "object_id_waypoint7":object_id_waypoint7, 		
-            "object_id_waypoint8":object_id_waypoint8 
+            "object_id_waypoint8":object_id_waypoint8,
+            "tag_1":  global.tag_1,
+            "tag_2":  global.tag_2,
+            "tag_3":  global.tag_3,
+            "tag_4":  global.tag_4,
+            "tag_5":  global.tag_5,
+            "tag_6":  global.tag_6,
+            "tag_7":  global.tag_7
         });
         
     
@@ -142,13 +173,20 @@ export default function CreatePublication() {
           redirect: 'follow'
          
         };
-
+       
         fetch(ip_address + '/createpublication', requestOptions)
           .then(response => response.json())
           .then(result => { console.log(result)})
           .catch(error => console.log('error', error));
-            navigation.goBack()
-        }
+            global.tag_1 = 0
+            global.tag_2 = 0
+            global.tag_3 = 0
+            global.tag_4 = 0
+            global.tag_5 = 0
+            global.tag_6 = 0
+            global.tag_7 = 0
+            //navigation.goBack()
+    }
         if(name=="" && comment !== ""){
             alert('Укажите наименование публикации')
         }
@@ -217,6 +255,7 @@ export default function CreatePublication() {
             
     }
     
+    
 
 
     return (
@@ -239,37 +278,18 @@ export default function CreatePublication() {
             </Text>
           
             <Text>
-                Карта
+                Теги
             </Text> 
-            <MapView
-         ref={mapRef}
-         initialRegion={{
-           latitude: 53.407163, 
-           longitude: 58.980291,
-           latitudeDelta: 0.0922,
-           longitudeDelta: 0.0421,
-         }}
-         style={{width: '100%', height: '40%' }}
-       >
-          
-        <MapViewDirections
-               origin={startPoint}
-               waypoints={wayPoints}
-               destination={endPoind}
-               apikey={GOOGLE_MAPS_APIKEY}
-               onReady={result => {
-                mapRef.current.fitToCoordinates(result.coordinates,{
-                    edgePadding: {
-                        right:3,
-                        bottom: 30,
-                        legt:30,
-                        top:10
-                    }
-                })
-               }} 
-             />
-       </MapView>
-            
+            <FlatList
+            data={tags}
+            vertical={true} 
+            numColumns={3}       
+            renderItem={({item})=> ( 
+                
+                    <Publication_Tag id={item.id} name={item.name}/>
+               
+            )}
+            />
              <Text>
                 Комментарий
             </Text>

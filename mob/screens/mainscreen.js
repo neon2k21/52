@@ -111,29 +111,7 @@ const [review_data, setReview_data] = useState([])
     } 
   }
 
-  const setUserDefaultPhoto=()=>{
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-      "user": global.user_id
-    });
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-    fetch(ip_address + '/setuserdefaultimage', requestOptions)
-      .then(response => response.json())
-      .then(result => {
-             
-        setReview_data(result)
-      })
-      .catch(error => console.log('error', error));
-  }
+ 
 
   const getReviews=(id)=>{
     var myHeaders = new Headers();
@@ -153,8 +131,7 @@ const [review_data, setReview_data] = useState([])
     fetch(ip_address + '/getcurrentreview', requestOptions)
       .then(response => response.json())
       .then(result => {
-             
-        setReview_data(result)
+        setReview_data(result[0])
       })
       .catch(error => console.log('error', error));
   }
@@ -262,10 +239,7 @@ const [review_data, setReview_data] = useState([])
     setmarkers_data(arr1)
     drawRoute(arr1)
   }
-
-
-
-  
+ 
 
   function drawRoute(points){
     console.warn(points)
@@ -425,8 +399,8 @@ const [review_data, setReview_data] = useState([])
           >
 
            
-          <View style={{backgroundColor:'red'}}>
-            
+          <View>
+          
           <RatingBar
           initialRating={global.object_rating}
           direction="horizontal"
@@ -469,13 +443,32 @@ const [review_data, setReview_data] = useState([])
                 Маршруты
               </Text>
             </View>
+            
+
+            <TouchableOpacity onPress={() => { addToFlatlist(global.object_id, global.object_altitude, global.object_longitute, global.object_name) }}>
+              <Text>
+                добавить к маршруту
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => { navigate('Все отзывы');}}>
+              <Text>
+              Посмотреть все
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => { addToFavor()}}>
+              <Text>
+              Добавить в избранное
+              </Text>
+            </TouchableOpacity>
+
             <BottomSheetFlatList
+            
           data={review_data}
-          extraData={review_data}
           horizontal={true}
-          contentContainerStyle={{ alignSelf: 'flex-start' }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ backgroundColor:'green',width:'100%',height:150 }}
+       
           renderItem={({ item, index }) => (
 
             <Review 
@@ -488,29 +481,9 @@ const [review_data, setReview_data] = useState([])
               image3={item.image3}
               data={item.data} 
               />
-
           )}
 
         />
-
-            <TouchableOpacity onPress={() => { addToFlatlist(global.object_id, global.object_altitude, global.object_longitute, global.object_name) }}>
-              <Text>
-                добавить к маршруту
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => { navigate('Написать отзыв');global.object_id_for_review = selectedMarkerData.id }}>
-              <Text>
-              Написать отзыв
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => { addToFavor()}}>
-              <Text>
-              Добавить в избранное
-              </Text>
-            </TouchableOpacity>
-
             
 
 

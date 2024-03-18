@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react"
-import {View} from "react-native"
+import { useCallback, useState } from "react"
+import {View, FlatList, TouchableOpacity, Text} from "react-native"
 import { ip_address } from "../../config";
-import { FlatList } from "react-native-gesture-handler";
 import PublicationCard from "../../components/publication/publicationCard";
 import { useFocusEffect } from "@react-navigation/core";
 
@@ -11,6 +10,59 @@ import { useFocusEffect } from "@react-navigation/core";
 export default function PublicationsScreen(){
 
     const [data, setData] = useState()
+    const [tags, setTags] = useState([])
+
+    const selectTag = (id)=>{
+      if(id==1){
+        getAllpubsByTag(1,0,0,0,0,0,0)
+        return
+      }
+      if(id==2){
+        getAllpubsByTag(0,2,0,0,0,0,0)
+        return
+      }
+      if(id==3){
+        getAllpubsByTag(0,0,3,0,0,0,0)
+        return
+      }
+      if(id==4){
+        getAllpubsByTag(0,0,0,4,0,0,0)
+        return
+      }
+      if(id==5){
+        getAllpubsByTag(0,0,0,0,5,0,0)
+        return
+      }
+      if(id==6){
+        getAllpubsByTag(0,0,0,0,0,6,0)
+        return
+      }
+      if(id==7){
+        getAllpubsByTag(0,0,0,0,0,0,7)
+        return
+      }
+    }
+
+
+    function getAllFilters(){
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+  
+      
+  
+      var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+      };
+
+      fetch(ip_address + '/getAllfilters', requestOptions)
+        .then(response => response.json())
+        .then(result => {setTags(result)})
+        .catch(error => console.log('error', error));
+         
+  }
+
 
 
     const getAllpubs = () => {
@@ -38,13 +90,74 @@ export default function PublicationsScreen(){
     
       }
 
+      const getAllpubsByTag = (filter1,filter2,filter3,filter4,filter5,filter6,filter7) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        var raw = JSON.stringify({
+          "tag_1": filter1,
+          "tag_2": filter2,
+          "tag_3": filter3,
+          "tag_4": filter4,
+          "tag_5": filter5,
+          "tag_6": filter6,
+          "tag_7": filter7
+        });
+    
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+    
+        fetch(ip_address + '/getallpublicationbyfilter', requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            setData(result)
+            console.log('result',result)
+            
+          })
+          .catch(error => console.log('error', error));
+    
+      }
 
-      useFocusEffect(useCallback(()=>{getAllpubs()},[]))
+    
+
+      useFocusEffect(useCallback(()=>{
+        getAllpubs()
+        getAllFilters()
+      },[]))
     
     
     
     return(
         <View style={{height:'100%', width:'100%', backgroundColor:'green'}}>
+         <FlatList
+            data={tags}
+            vertical={true} 
+            numColumns={3}       
+            renderItem={({item})=> ( 
+                
+              <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{selectTag(item.id);}}>
+              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
+                          <Text>
+                              {item.id}
+                          </Text>
+                  </View>
+                  <Text style={{margin:2}}>
+                      {item.name}
+                  </Text>
+                  <View>
+      
+                  </View>
+              </View>
+          </TouchableOpacity>
+               
+            )}
+            />
+
            <FlatList
           data={data}
           extraData={data}
@@ -53,8 +166,7 @@ export default function PublicationsScreen(){
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item, index }) => (
-
-
+            
               <PublicationCard 
               id={item.id} 
               useradd={item.useradd} 
@@ -87,6 +199,13 @@ export default function PublicationsScreen(){
               object_id_waypoint6={item.object_id_waypoint6}
               object_id_waypoint7={item.object_id_waypoint7}
               object_id_waypoint8={item.object_id_waypoint8}
+              tag_1={item.tag_1}
+              tag_2={item.tag_2}
+              tag_3={item.tag_3}
+              tag_4={item.tag_4}
+              tag_5={item.tag_5}
+              tag_6={item.tag_6}
+              tag_7={item.tag_7}
               />
 
           )}

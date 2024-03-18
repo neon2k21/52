@@ -2,6 +2,8 @@ import { useFocusEffect } from "@react-navigation/core";
 import { useCallback, useState } from "react";
 import { TouchableOpacity,View,Text,Image } from "react-native"
 import { ip_address } from "../../config";
+import { watchPositionAsync } from "expo-location";
+import { widthPercentageToDP } from "react-native-responsive-screen";
 
 
 
@@ -32,7 +34,7 @@ export default function Comment(props){
           .then(response => response.json())
           .then(result => {
             setNickName(result[0].nickname)
-            setImage({uri: `data:image/jpeg;base64,result[0].avatar`})
+            setImage({uri: `data:image/jpeg;base64,${result[0].avatar}`})
           })
           .catch(error => console.log('error', error));
     }
@@ -40,28 +42,32 @@ export default function Comment(props){
 
     useFocusEffect(
         useCallback(()=>{
-            getUserData(global.user_id)
+            getUserData(userid)
         },[])
     )
 
 
     return(
-        <TouchableOpacity>
-            <Image style={{width:120, height:120}} source={{uri: image.uri}}/>
-            <Text>
+       <View className="flex-row">
+            <Image style={{width:70, height:70}} className="rounded-full" source={{uri: image.uri}}/>
+            <View>
+                <View className="flex-row" style={{width:widthPercentageToDP(70)}} >
+                <Text className="text-xl">
                 {nickname}
             </Text>
-            <Text>
+            <Text style={{right:-170}}>
                 {date}
             </Text>
+                </View>
+            
             <Text>
                 {comment}
             </Text>
-            <Text>
-                {id}
-            </Text>
+            
+            </View>
            
-        </TouchableOpacity>
+           
+        </View>
 
     )
 }

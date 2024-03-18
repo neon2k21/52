@@ -9,10 +9,12 @@ import CreateReview from '../screens/review/createReview';
 import CommentScreen from '../screens/publications/commentscreen';
 import LoginScreen from '../screens/loginscreen';
 import Profile from '../screens/profile/profile'
+import ReviewScreen from '../screens/review/ReviewScreen';
 
 const Login_Stack = createNativeStackNavigator()
 const Publication_Stack = createNativeStackNavigator()
 const MainScreen_Stack = createNativeStackNavigator()
+const Review_Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 
@@ -23,7 +25,7 @@ return(
   <Tab.Navigator>
     <Tab.Screen name = "Карта" options={{headerShown: false}} component={MainScreen_StackNavigator}/>
     <Tab.Screen name = "Публикации" options={{headerShown: false}} component={Publication_stacknavigator}/>
-    <Tab.Screen name = "Профиль"  component={Profile}/>
+    <Tab.Screen name = "Профиль" options={{headerShown: false}} component={Profile}/>
   </Tab.Navigator>
 )
   
@@ -38,6 +40,15 @@ function Publication_stacknavigator(){
   )  
 }
 
+function Review_StackNavigator(){
+  return(
+    <Review_Stack.Navigator>
+      <Review_Stack.Screen name = "dd" options={{headerShown: false}} component={ReviewScreen}/>
+      <Review_Stack.Screen name = "Написать отзыв" options={{headerShown: false}} component={CreateReview}/>
+    </Review_Stack.Navigator>
+  )
+}
+
 
 
 function MainScreen_StackNavigator(){
@@ -46,7 +57,7 @@ function MainScreen_StackNavigator(){
     <MainScreen_Stack.Navigator>
       <MainScreen_Stack.Screen name = "dd" options={{headerShown: false}} component={UserMainScreen}/>
       <MainScreen_Stack.Screen name = "Создать публикацию" options={{headerShown: false}} component={CreatePublication}/>
-      <MainScreen_Stack.Screen name = "Написать отзыв" options={{headerShown: false}} component={CreateReview}/>
+      <MainScreen_Stack.Screen name = "Все отзывы" component={Review_StackNavigator}/>
 
     </MainScreen_Stack.Navigator>
   )

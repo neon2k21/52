@@ -9,7 +9,7 @@ router.post('/getuserlikes',userController.getLikedPubs)
 router.post('/getuserfavor',userController.getFavouriteObject)
 router.delete('/user', userController.deleteUser)
 router.put('/setusertoken', userController.setUserToken)
-
+router.put('/setNewAvatar', userController.setUserAvatar)
 
 
 module.exports = router

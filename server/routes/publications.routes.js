@@ -15,6 +15,6 @@ router.post('/writecommentpublication',publicationController.writecommentpublica
 router.post('/deletelikepublication',publicationController.deletelikepublication)
 router.post('/deletecommentpublication',publicationController.deletecommentpublication)
 router.post('/getallcommentsbypub',publicationController.getcommentsbypub)
-
+router.get('/getAllfilters', publicationController.getAllFilters)
 
 module.exports = router

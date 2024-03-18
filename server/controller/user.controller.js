@@ -107,6 +107,18 @@ class UserController{
 }
 
 
+    async setUserAvatar(req,res){
+        const {id,avatar} =req.body
+        const sql = (
+            ` update users set avatar=? where id=?;`
+        )
+
+        db.all(sql,[avatar, id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
+    }
+
     
 }
 

@@ -43,7 +43,14 @@ export default function PublicationCard(props){
     object_id_waypoint5,
     object_id_waypoint6,
     object_id_waypoint7,
-    object_id_waypoint8
+    object_id_waypoint8,
+    tag_1,
+    tag_2,
+    tag_3,
+    tag_4,
+    tag_5,
+    tag_6,
+    tag_7
 
     } = props
     
@@ -53,6 +60,39 @@ export default function PublicationCard(props){
     const [time, setTime]= useState("")
     const [likes,setLikes] = useState(likes_count)
     
+    const [Filters, setFilters] = useState([])
+    const [allFilters, setAllFilters] = useState([])
+
+    const setPubFilters=()=>{
+      let pt = []
+      if(global.allFilters[0].id==tag_1) pt.push(global.allFilters[0].name)
+      if(global.allFilters[1].id==tag_2) pt.push(global.allFilters[1].name)
+      if(global.allFilters[2].id==tag_3) pt.push(global.allFilters[2].name)
+      if(global.allFilters[3].id==tag_4) pt.push(global.allFilters[3].name)
+      if(global.allFilters[4].id==tag_5) pt.push(global.allFilters[4].name)
+      if(global.allFilters[5].id==tag_6) pt.push(global.allFilters[5].name)
+      if(global.allFilters[6].id==tag_7) pt.push(global.allFilters[6].name)
+      setFilters(pt)
+    }
+
+    const getAllFilters=()=>{
+      var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        
+    
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        fetch(ip_address + '/getAllfilters', requestOptions)
+          .then(response => response.json())
+          .then(result => {setAllFilters(result); global.allFilters=result})
+          .catch(error => console.log('error', error));
+          setPubFilters()
+    }
 
 
     let name_start = ''
@@ -201,7 +241,7 @@ export default function PublicationCard(props){
     useFocusEffect(useCallback(()=>{
         convertWaypointToArray()
         putImagesToArray()
-        
+        getAllFilters()
         
     },[]))
     
@@ -288,6 +328,8 @@ export default function PublicationCard(props){
     }
 
 
+
+
     const convertWaypointToArray = () =>{
         const arr = []
         if( object_id_waypoint1!==0) arr.push(JSON.parse(waypoint1))
@@ -306,6 +348,35 @@ export default function PublicationCard(props){
             <Text className="text-2xl">
                 {name}
             </Text>
+            <Text>
+              Теги
+            </Text>
+            
+            <FlatList
+            data={Filters}
+            vertical={true} 
+            numColumns={3}       
+            renderItem={({item})=> ( 
+                
+              <TouchableOpacity style={{height:30}} className="rounded-2xl">
+              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
+                          <Text>
+                             
+                          </Text>
+                  </View>
+                  <Text style={{margin:2}}>
+                      {item}
+                  </Text>
+                  <View>
+      
+                  </View>
+              </View>
+          </TouchableOpacity>
+               
+            )}
+            
+            />
             <Text>
                 Описание: {review}
             </Text>
@@ -403,6 +474,35 @@ export default function PublicationCard(props){
             <Text className="text-2xl">
                 {name}
             </Text>
+            <Text>
+              Теги
+            </Text>
+            
+            <FlatList
+            data={Filters}
+            vertical={true} 
+            numColumns={3}       
+            renderItem={({item})=> ( 
+                
+              <TouchableOpacity style={{height:30}} className="rounded-2xl">
+              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
+                          <Text>
+                             
+                          </Text>
+                  </View>
+                  <Text style={{margin:2}}>
+                      {item}
+                  </Text>
+                  <View>
+      
+                  </View>
+              </View>
+          </TouchableOpacity>
+               
+            )}
+            
+            />
             <Text>
                 Описание: {review}
             </Text>

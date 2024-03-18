@@ -16,7 +16,13 @@ firebase.initializeApp(firebaseConfig)
 global.userNickName = ''
 global.markers_data = []
 global.route_type='WALKING'
-
+global.tag_1 = 0
+global.tag_2 = 0
+global.tag_3 = 0
+global.tag_4 = 0
+global.tag_5 = 0
+global.tag_6 = 0
+global.tag_7 = 0
 
 export default function App() {
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);

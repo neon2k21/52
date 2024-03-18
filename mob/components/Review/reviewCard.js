@@ -10,9 +10,9 @@ export default function Review(props){
 
     const [imageData, setImageData] = useState([])
     const [nickname, setNickName] = useState("")
+    const [image, setImage] = useState("")
 
-    const {user, object, comment, mark, image1, image2, image3,data} = props
-
+    const {user, comment, mark, image1, image2, image3,data} = props
 
     const getUserNickName = (id) =>{
         var myHeaders = new Headers();
@@ -33,11 +33,9 @@ export default function Review(props){
           .then(response => response.json())
           .then(result => {
             setNickName(result[0].nickname)
-            
+            setImage({uri: `data:image/jpeg;base64,${result[0].avatar}`})
           })
           .catch(error => console.log('error', error));
-
-
     }
 
     useEffect(()=>{
@@ -52,18 +50,13 @@ export default function Review(props){
         arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image2)}`})
         arr.push({uri: `data:image/jpeg;base64,${JSON.parse(image3)}`})
         setImageData(arr)
-  
       }
 
 return(
-    <View style={{width:500, height:200}}>
-        <Image />
+    <View>
+            <Image style={{width:70, height:70}} className="rounded-full" source={{uri: image.uri}}/>
         <Text>
             юзер: {nickname}
-        </Text>
-
-        <Text>
-        object: {object}
         </Text>
         <Text>
         comment: {comment}

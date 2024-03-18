@@ -1,11 +1,12 @@
-import { useWindowDimensions,Text,View,TouchableOpacity,FlatList} from "react-native";
+import { useWindowDimensions,Text,View,TouchableOpacity,FlatList, Image} from "react-native";
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import { TabView, SceneMap ,TabBar} from 'react-native-tab-view';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ip_address } from "../../config";
 import PublicationCard from "../../components/publication/publicationCard";
 import ObjectCard from "../../components/object/objectCard";
+import { launchImageLibrary } from "react-native-image-picker";
 
 
 
@@ -13,30 +14,63 @@ import ObjectCard from "../../components/object/objectCard";
 
 
 
-export  default function Profile(){ 
+export  default function Profile(){
+
+    const [image, setImage] = useState(global.user_avatar)
+
+    const setNewAvatar=(avatar)=>{
+      var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        var raw = JSON.stringify({
+          "id": global.user_id,
+          "avatar": avatar
+        });
+    
+        var requestOptions = {
+          method: 'PUT',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+    
+        fetch(ip_address + '/setNewAvatar', requestOptions)
+          .then(response => response.json())
+          .then(result => {})
+          .catch(error => console.log('error', error));
+
+    }
+
+    const openGallery = () => {
+        
+      launchImageLibrary({
+          mediaType: 'photo',
+          includeBase64: true,
+          quality: 0.01
+         },response => {
+          if(response.didCancel){
+                  console.log("отмена")
+          } 
+          else if( response.errorCode) {
+              console.log("ошибка")
+          }
+          else {
+              console.log(response.assets[0].base64)
+              setImage(response.assets[0].base64)
+              global.user_avatar = response.assets[0].base64
+              setNewAvatar(response.assets[0].base64)
+          }
+      })
+  }
+
+
   const navigation = useNavigation()
-  useFocusEffect(
-    useCallback(()=>{
-        navigation.setOptions({
-            headerTitle: () => (
-                <View className="flex-row" style={{gap:wp(5),paddingHorizontal:wp(5)}}>
-                  
-                <TouchableOpacity>
-                    <Text>
-                        Привет, {global.userNickName} {global.user_avatar}
-                    </Text>
-                </TouchableOpacity>
-                
-                </View>
-                
-      ),
-            backgroundColor: 'white',
-            
-          });
-    },[])
-  )
+  
+  
    
-
+    useEffect(()=>{
+      setImage(global.user_avatar)
+    },[])
  
   
   
@@ -317,15 +351,28 @@ export  default function Profile(){
     />
   );
   return(
-      
-    <TabView
+    <View style={{width:'100%',height:'100%'}}>
+      <View className="flex-row" style={{gap:wp(5),paddingHorizontal:wp(5)}}>
+                  
+                  <TouchableOpacity className="flex-row" onLongPress={()=>{openGallery()}}>
+                  <Image className="rounded-full" style={{width:70, height:70}} source={{uri: `data:image/jpeg;base64,${image}`}}/>
+                      <Text>
+                          Привет, {global.userNickName}
+                      </Text>  
+                  </TouchableOpacity>
+                  
+                  </View>
+      <TabView
     renderTabBar={renderTabBar}
     style={{backgroundColor:'white'}}
     navigationState={{ index, routes }}
     renderScene={renderScene}
     onIndexChange={setIndex}
     initialLayout={{ width: layout.width }}
-  />    
+  />
+    </View>
+      
+        
   
   )
 }
