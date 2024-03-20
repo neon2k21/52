@@ -704,7 +704,30 @@ export default function UserMainScreen() {
           )}
 
         />
+<FlatList
+          data={categories}
+          vertical={false}
+          numColumns={2}
+          contentContainerStyle={{ alignSelf: 'flex-start',zIndex:-1 }}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          renderItem={({ item }) => (
 
+            <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{getObjectsByCategory(item.id)}}>
+            <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+                
+                <Text style={{margin:2}}>
+                    {item.name}
+                </Text>
+                <View>
+    
+                </View>
+            </View>
+        </TouchableOpacity>
+          )}
+
+        />
 
 <BottomSheetModal
           ref={bottomSheetRef}
