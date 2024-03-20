@@ -87,6 +87,27 @@ class ObjectController{
 
     }
 
+    async getAllCategories(req,res){
+        const sql = `select * from object_category`
+       
+        await db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+       })
+    }
+
+
+    async getAllObjectsByCategory(req,res){
+        const {category} = req.body
+         const sql = `SELECT * from objects where category=?`
+       
+        await db.all(sql,[category], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)
+       })
+
+    }
+
     async getCurrentObject(req,res){
 
         const {id} = req.body

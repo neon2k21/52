@@ -11,34 +11,47 @@ export default function PublicationsScreen(){
 
     const [data, setData] = useState()
     const [tags, setTags] = useState([])
+    const [selectFilter,setSelectFilter] = useState(false)
 
     const selectTag = (id)=>{
-      if(id==1){
+      if(id==1 && !selectFilter){
         getAllpubsByTag(1,0,0,0,0,0,0)
+        setSelectFilter(true)
         return
       }
-      if(id==2){
+      if(id==2 && !selectFilter){
         getAllpubsByTag(0,2,0,0,0,0,0)
+        setSelectFilter(true)
         return
       }
-      if(id==3){
+      if(id==3 && !selectFilter){
         getAllpubsByTag(0,0,3,0,0,0,0)
+        setSelectFilter(true)
         return
       }
-      if(id==4){
+      if(id==4 && !selectFilter){
         getAllpubsByTag(0,0,0,4,0,0,0)
+        setSelectFilter(true)
         return
       }
-      if(id==5){
+      if(id==5 && !selectFilter){
         getAllpubsByTag(0,0,0,0,5,0,0)
+        setSelectFilter(true)
         return
       }
-      if(id==6){
+      if(id==6 && !selectFilter){
         getAllpubsByTag(0,0,0,0,0,6,0)
+        setSelectFilter(true)
         return
       }
-      if(id==7){
+      if(id==7 && !selectFilter){
         getAllpubsByTag(0,0,0,0,0,0,7)
+        setSelectFilter(true)
+        return
+      }
+      if(selectFilter){
+        getAllpubs()
+        setSelectFilter(false)
         return
       }
     }
@@ -166,7 +179,7 @@ export default function PublicationsScreen(){
           contentContainerStyle={{ paddingBottom:4000 }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item, index }) => (
+          renderItem={({ item }) => (
             
               <PublicationCard 
               id={item.id} 

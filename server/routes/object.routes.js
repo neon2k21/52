@@ -2,8 +2,9 @@ const Router = require('express')
 const router = new Router()
 const objectController = require('../controller/object.controller')
 
-
+router.get('/getallcategories', objectController.getAllCategories)
 router.get('/getallobjects', objectController.getAllObjects)
+router.post('/getallobjectsbycategory', objectController.getAllObjectsByCategory)
 router.post('/addnewobject', objectController.createObject)
 router.delete('/deleteobject', objectController.deleteObject)
 router.put('/updateobject', objectController.updateObject)

@@ -85,6 +85,7 @@ export  default function Profile(){
 
   const MyPubs=()=>{
     const [MyPubs, setMyPubs] = useState([])
+
    
     const getMyPubs = ()=>{
         var myHeaders = new Headers();
@@ -161,6 +162,13 @@ export  default function Profile(){
               object_id_waypoint6={item.object_id_waypoint6}
               object_id_waypoint7={item.object_id_waypoint7}
               object_id_waypoint8={item.object_id_waypoint8}
+              tag_1={item.tag_1}
+              tag_2={item.tag_2}
+              tag_3={item.tag_3}
+              tag_4={item.tag_4}
+              tag_5={item.tag_5}
+              tag_6={item.tag_6}
+              tag_7={item.tag_7}
               />
 
           )}
@@ -317,6 +325,13 @@ export  default function Profile(){
               object_id_waypoint6={item.object_id_waypoint6}
               object_id_waypoint7={item.object_id_waypoint7}
               object_id_waypoint8={item.object_id_waypoint8}
+              tag_1={item.tag_1}
+              tag_2={item.tag_2}
+              tag_3={item.tag_3}
+              tag_4={item.tag_4}
+              tag_5={item.tag_5}
+              tag_6={item.tag_6}
+              tag_7={item.tag_7}
               />
 
           )}

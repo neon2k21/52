@@ -32,36 +32,28 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
 export default function UserMainScreen() {
 
+  const [categories, setCategories] = useState([])
+  const [clickedCat, setClickedCat] = useState(false)
 
-const [review_data, setReview_data] = useState([])
-
+  const [review_data, setReview_data] = useState([])
   const [distance, setDistance] = useState("")
   const [time, setTime]= useState("")
-
-
   const [onRoute, setOnRoute] = useState(false)
-
   const {navigate} = useNavigation()
   const {isFocused} = useIsFocused();
-
-  
   const [routing, setRouting] = useState([])
   const [names, SetNames] = useState([])
   const [startPoint,setStartPoint] = useState()
   const [endPoind, setEndPoint] = useState()
   const [wayPoints,setWaypoints] = useState([])
-
-
   const [markers_data, setmarkers_data] = useState([])
   const [user_location, set_user_location] = useState([])
   const [location, setLocation] = useState({ "coords": { "accuracy": 600, "altitude": 0, "altitudeAccuracy": 0, "heading": 0, "latitude": 53.4186, "longitude": 59.0472, "speed": 0 }, "mocked": false, "timestamp": 1708581410459 });
-
   const [selectedMarkerData, setSelectedMarkerData] = useState({});
-
   const [fullData, setFullData] = useState([])
   const [data, setData] = useState([])
-
   const [searchQuery, setSearchQuery] = useState('');
+
 
   const bottomSheetRef = useRef(null);
 
@@ -91,6 +83,24 @@ const [review_data, setReview_data] = useState([])
       .catch(error => console.log('error', error));
   }
 
+  const getAllCategories=()=>{
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(ip_address + '/getallcategories', requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        setCategories(result)
+      })
+      .catch(error => console.log('error', error));
+  }
 
   const handleSearch = (query) =>{
     setSearchQuery(query)
@@ -169,7 +179,6 @@ const [review_data, setReview_data] = useState([])
         const {latitude,longitude } = coords
         set_user_location({latitude,longitude})
         global.user_location = {latitude,longitude}
-        //console.log({latitude,longitude })
         if(onRoute && time > 5 || 0) startRouting( global.user_location)
         else setOnRoute(false)
       }
@@ -178,24 +187,19 @@ const [review_data, setReview_data] = useState([])
       getPermissions();
       getAllObjects()
       watch()
+      getAllCategories()
 
 
     },[])
   )
 
-    useEffect(()=>{
-     
-    },[])
+  
 
   const startRouting = (user_location) =>{
-    
     let new_arr = [{"point":user_location}, ...markers_data]
     drawRoute(new_arr)
     setOnRoute(true)
-    // else setOnRoute(false)
   }
-
-
 
   const getAllObjects = () => {
     var myHeaders = new Headers();
@@ -240,14 +244,11 @@ const [review_data, setReview_data] = useState([])
     drawRoute(arr1)
   }
  
-
   function drawRoute(points){
-    console.warn(points)
     let only_points = []
     for(let i=0; i<points.length;i++){
       only_points.push(points[i].point)
     }
-    console.error(only_points)
     if (only_points.length > 1) {  
       if(only_points.length < 3) {
 
@@ -276,12 +277,42 @@ const [review_data, setReview_data] = useState([])
     }
   }
 
+  const getObjectsByCategory=(category_id)=>{
+    if(!clickedCat){
+      console.log('click')
+      var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
+    var raw = JSON.stringify({
+      "category": category_id
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body:raw,
+      redirect: 'follow'
+    };
+
+    fetch(ip_address + '/getallobjectsbycategory', requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        setData(result)
+        setFullData(result)
+      })
+      .catch(error => console.log('error', error));
+      setClickedCat(true)
+    }
+    else {
+      setClickedCat(false)
+      getAllObjects()
+    }
+  }
 
   if(!onRoute && markers_data.length == 0){
     return (
       <BottomSheetModalProvider style={{ height: '100%', width: '100%', backgroundColor: 'red' }}>
-       
+        
         
          <MapView
           showsPointsOfInterest={false}
@@ -369,7 +400,8 @@ const [review_data, setReview_data] = useState([])
           <MagnifyingGlassCircleIcon color={'black'} size={widthPercentageToDP(12)} style={{ top: -4, right: -275 }} />
 
         </View>
-          
+        
+        
 
         <FlatList
           data={markers_data}
@@ -387,6 +419,31 @@ const [review_data, setReview_data] = useState([])
               <SelectedMarker id={index + 1} altitude={item.altitude} longitute={item.longitute} name={item.name} />
 
             </TouchableOpacity>
+          )}
+
+        />
+
+<FlatList
+          data={categories}
+          vertical={false}
+          numColumns={2}
+          contentContainerStyle={{ alignSelf: 'flex-start',zIndex:-1 }}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          renderItem={({ item }) => (
+
+            <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{getObjectsByCategory(item.id)}}>
+            <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+                
+                <Text style={{margin:2}}>
+                    {item.name}
+                </Text>
+                <View>
+    
+                </View>
+            </View>
+        </TouchableOpacity>
           )}
 
         />
@@ -463,7 +520,7 @@ const [review_data, setReview_data] = useState([])
               </Text>
             </TouchableOpacity>
 
-            <BottomSheetFlatList
+            <FlatList
             
           data={review_data}
           horizontal={true}
@@ -720,7 +777,7 @@ const [review_data, setReview_data] = useState([])
               </Text>
             </TouchableOpacity>
 
-            <BottomSheetFlatList
+            <FlatList
           data={review_data}
           extraData={review_data}
           horizontal={true}
@@ -787,7 +844,7 @@ const [review_data, setReview_data] = useState([])
                   setDistance(result.distance)
                   setTime(result.duration)
                   if(result.distance == "") setOnRoute(false)
-                  console.log('distanse',distance,"time",time)}}
+                 }}
               />
         </MapView>
         <TouchableOpacity style={{ position:'absolute' ,top: 250,backgroundColor:'green',right:120}} onPress={()=>{setmarkers_data([]); global.markers_data=[]; setOnRoute(false); drawRoute([])}}>
