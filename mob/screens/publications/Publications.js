@@ -4,13 +4,19 @@ import { ip_address } from "../../config";
 import PublicationCard from "../../components/publication/publicationCard";
 import { useFocusEffect } from "@react-navigation/core";
 
-
+const filters = [
+  {"id": 1, "name": "природа"}, 
+  {"id": 2, "name": "еда"}, 
+  {"id": 3, "name": "достопримечательности"}, 
+  {"id": 4, "name": "на машине"}, 
+  {"id": 5, "name": "пеший"}, 
+  {"id": 6, "name": "развлечения"}, 
+  {"id": 7, "name": "семейный"}]
 
 
 export default function PublicationsScreen(){
 
     const [data, setData] = useState()
-    const [tags, setTags] = useState([])
     const [selectFilter,setSelectFilter] = useState(false)
 
     const selectTag = (id)=>{
@@ -57,24 +63,7 @@ export default function PublicationsScreen(){
     }
 
 
-    function getAllFilters(){
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-  
-      
-  
-      var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
-      };
-
-      fetch(ip_address + '/getAllfilters', requestOptions)
-        .then(response => response.json())
-        .then(result => {setTags(result)})
-        .catch(error => console.log('error', error));
-         
-  }
+ 
 
 
 
@@ -82,9 +71,6 @@ export default function PublicationsScreen(){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
     
-        var raw = JSON.stringify({
-          "contact": Number(global.id)
-        });
     
         var requestOptions = {
           method: 'GET',
@@ -95,9 +81,7 @@ export default function PublicationsScreen(){
         fetch(ip_address + '/getallpublication', requestOptions)
           .then(response => response.json())
           .then(result => {
-            setData(result)
-            console.log('result',result)
-            
+            setData(result)           
           })
           .catch(error => console.log('error', error));
     
@@ -127,28 +111,19 @@ export default function PublicationsScreen(){
         fetch(ip_address + '/getallpublicationbyfilter', requestOptions)
           .then(response => response.json())
           .then(result => {
-            setData(result)
-            console.log('result',result)
-            
+            setData(result)          
           })
           .catch(error => console.log('error', error));
     
       }
 
-    useEffect(()=>{},[])
 
-      useFocusEffect(useCallback(()=>{ 
-        getAllFilters()
-        getAllpubs()
-       
-      },[]))
-    
-    
-    
+    useFocusEffect(useCallback(()=>{getAllpubs()},[]))
+        
     return(
         <View style={{height:'100%', width:'100%'}}>
          <FlatList
-            data={tags}
+            data={filters}
             vertical={true} 
             numColumns={3}       
             renderItem={({item})=> ( 

@@ -8,6 +8,15 @@ import { HeartIcon,ChatBubbleBottomCenterIcon } from "react-native-heroicons/out
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
+const filters = [
+  {"id": 1, "name": "природа"}, 
+  {"id": 2, "name": "еда"}, 
+  {"id": 3, "name": "достопримечательности"}, 
+  {"id": 4, "name": "на машине"}, 
+  {"id": 5, "name": "пеший"}, 
+  {"id": 6, "name": "развлечения"}, 
+  {"id": 7, "name": "семейный"}]
+
 
 export default function PublicationCard(props){
 
@@ -61,40 +70,20 @@ export default function PublicationCard(props){
     const [likes,setLikes] = useState(likes_count)
     
     const [Filters, setFilters] = useState([])
-    const [allFilters, setAllFilters] = useState([])
 
     const setPubFilters=()=>{
       let pt = []
-      if(global.allFilters[0].id==tag_1) pt.push(global.allFilters[0].name)
-      if(global.allFilters[1].id==tag_2) pt.push(global.allFilters[1].name)
-      if(global.allFilters[2].id==tag_3) pt.push(global.allFilters[2].name)
-      if(global.allFilters[3].id==tag_4) pt.push(global.allFilters[3].name)
-      if(global.allFilters[4].id==tag_5) pt.push(global.allFilters[4].name)
-      if(global.allFilters[5].id==tag_6) pt.push(global.allFilters[5].name)
-      if(global.allFilters[6].id==tag_7) pt.push(global.allFilters[6].name)
+      if(tag_1!=0) pt.push(filters[0].name)
+      if(tag_2!=0) pt.push(filters[1].name)
+      if(tag_3!=0) pt.push(filters[2].name)
+      if(tag_4!=0) pt.push(filters[3].name)
+      if(tag_5!=0) pt.push(filters[4].name)
+      if(tag_6!=0) pt.push(filters[5].name)
+      if(tag_7!=0) pt.push(filters[6].name)
       setFilters(pt)
     }
 
-    const getAllFilters=()=>{
-      var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-    
-        
-    
-        var requestOptions = {
-          method: 'GET',
-          headers: myHeaders,
-          redirect: 'follow'
-        };
-
-        fetch(ip_address + '/getAllfilters', requestOptions)
-          .then(response => response.json())
-          .then(result => {setAllFilters(result); global.allFilters=result})
-          .catch(error => console.log('error', error));
-          setPubFilters()
-    }
-
-
+  
     let name_start = ''
     let name_end = ''
     let name_w1 = ''
@@ -241,11 +230,10 @@ export default function PublicationCard(props){
     useFocusEffect(useCallback(()=>{
         convertWaypointToArray()
         putImagesToArray()
-        getAllFilters()
-        
     },[]))
     
     useEffect(()=>{
+      setPubFilters()
       setLikes(likes_count)
     },[])
  
@@ -360,11 +348,7 @@ export default function PublicationCard(props){
                 
               <TouchableOpacity style={{height:30}} className="rounded-2xl">
               <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
-                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
-                          <Text>
-                             
-                          </Text>
-                  </View>
+                  
                   <Text style={{margin:2}}>
                       {item}
                   </Text>
