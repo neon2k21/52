@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
-import {View, FlatList, TouchableOpacity, Text} from "react-native"
+import {View, FlatList, TouchableOpacity, Text, StyleSheet, Pressable, Image, Modal} from "react-native"
 import { ip_address } from "../../config";
 import PublicationCard from "../../components/publication/publicationCard";
 import { useFocusEffect } from "@react-navigation/core";
+import { COLORS } from "../../color";
+import Tag from "../../components/publication/tag"
+import { head } from "lodash";
+import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
 
 const filters = [
   {"id": 1, "name": "природа"}, 
@@ -15,6 +19,7 @@ const filters = [
 
 
 export default function PublicationsScreen(){
+  const [modalVisible, setModalVisible] = useState(false);
 
     const [data, setData] = useState()
     const [selectFilter,setSelectFilter] = useState(false)
@@ -121,31 +126,47 @@ export default function PublicationsScreen(){
     useFocusEffect(useCallback(()=>{getAllpubs()},[]))
         
     return(
-        <View style={{height:'100%', width:'100%'}}>
-         <FlatList
+        <View style={styles.container}>
+          <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Text style={styles.title}>Маршруты</Text>
+          <Pressable
+        
+        onPress={() => setModalVisible(true)}>
+        <Image style={styles.openModal}source={require('../../assets/images/filterWhite.png')}/>
+      </Pressable>
+      </View>
+             <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        style={{justifyContent:'center'}}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        
+          <View style={styles.modalView}>
+            <Pressable
+              style={styles.closeModal}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Image source={require('../../assets/images/cross.png')} style={styles.cross}/>
+            </Pressable>
+          <FlatList
             data={filters}
             vertical={true} 
             numColumns={3}       
             renderItem={({item})=> ( 
                 
               <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{selectTag(item.id)}}>
-              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
-                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
-                          <Text>
-                              {item.id}
-                          </Text>
-                  </View>
-                  <Text style={{margin:2}}>
-                      {item.name}
-                  </Text>
-                  <View>
-      
-                  </View>
-              </View>
+              <Tag name={item.name}/>
           </TouchableOpacity>
                
             )}
             />
+            
+          </View>
+     
+      </Modal>
 
            <FlatList
           data={data}
@@ -160,6 +181,7 @@ export default function PublicationsScreen(){
               id={item.id} 
               useradd={item.useradd} 
               name={item.name} 
+              image={item.image}
               points_names={item.points_names}
               review={item.review} 
               likes_count={item.likes_count} 
@@ -203,3 +225,37 @@ export default function PublicationsScreen(){
         </View>
     )
 }
+const styles = StyleSheet.create({
+  container:{
+    backgroundColor:COLORS.blue
+  },
+  title:{
+    fontFamily:'Black',
+    fontSize:heightPercentageToDP(4.4),
+    color:COLORS.white,
+    marginLeft:widthPercentageToDP(2),
+    marginVertical:heightPercentageToDP(2)
+  },
+  openModal:{
+    width:heightPercentageToDP(4.5),
+    height:heightPercentageToDP(4.5),
+    marginLeft:widthPercentageToDP(30),
+    marginTop:heightPercentageToDP(1)
+  },
+  modalView:{
+    alignSelf:'center',
+    backgroundColor:'#fff',
+    alignItems:'center',
+    padding:10,
+    width:widthPercentageToDP(87),
+    paddingLeft:0,
+    borderBottomEndRadius:heightPercentageToDP(1.8),borderBottomStartRadius:heightPercentageToDP(1.8),borderTopEndRadius:heightPercentageToDP(1.8),
+    borderTopStartRadius:heightPercentageToDP(1.8),
+    marginTop:heightPercentageToDP(40)
+  },
+  cross:{
+    width:24,
+    height:24,
+    marginLeft:widthPercentageToDP(70)
+  }
+})

@@ -1,10 +1,13 @@
 import { useCallback, useEffect,useState } from "react"
-import { FlatList, Text, TouchableOpacity, View,Image } from "react-native"
+import { FlatList, Text, TouchableOpacity, View,Image, StyleSheet } from "react-native"
 import MapView from "react-native-maps"
 import MapViewDirections from "react-native-maps-directions"
 import { ip_address } from "../../config"
 import { useFocusEffect, useNavigation } from "@react-navigation/core"
 import { HeartIcon,ChatBubbleBottomCenterIcon } from "react-native-heroicons/outline"
+import Tag from "./tag"
+import { COLORS } from "../../color"
+import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen"
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
@@ -23,6 +26,7 @@ export default function PublicationCard(props){
   const {
 
     id, 
+    image,
     useradd, 
     name, 
     points_names,
@@ -332,13 +336,12 @@ export default function PublicationCard(props){
     }
     if(images[0].uri!="data:image/jpeg;base64,"){
       return(
-        <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
-            <Text className="text-2xl">
+        <View style={styles.container} >
+            
+            <Text style={styles.nick}>
                 {name}
             </Text>
-            <Text>
-              Теги
-            </Text>
+            
             
             <FlatList
             data={Filters}
@@ -346,37 +349,17 @@ export default function PublicationCard(props){
             numColumns={3}       
             renderItem={({item})=> ( 
                 
-              <TouchableOpacity style={{height:30}} className="rounded-2xl">
-              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
-                  
-                  <Text style={{margin:2}}>
-                      {item}
-                  </Text>
-                  <View>
-      
-                  </View>
-              </View>
-          </TouchableOpacity>
+              
+              <Tag name={item}></Tag>
                
             )}
             
             />
-            <Text>
-                Описание: {review}
-            </Text>
-            <Text>
-               Основные точки маршрута: {points_names}
-            </Text>
-            <Text>
-               Длительность маршрута: {distance} км.
-            </Text>
-            <Text>
-              Время прохождения маршрута: {time} 
-            </Text>
+           
             
             
             
-          
+         
             <MapView
                     initialRegion={{
                       latitude: 53.407163, 
@@ -389,133 +372,7 @@ export default function PublicationCard(props){
                     toolbarEnabled={false}
                     showsUserLocation
                     mapType='terrain'        
-                    style={{width: '100%', height: '25%',borderRadius:100,padding:10 }}
-                    className="rounded-2xl"
-                  >
-                      
-                    <MapViewDirections
-                          origin={JSON.parse(startpoint)}
-                          waypoints={waypointArr}
-                          destination={JSON.parse(endpoint)}
-                          apikey={GOOGLE_MAPS_APIKEY}
-                          onReady={result=>{
-                            setDistance(result.distance)
-                            setTime(result.duration)
-                            if(result.distance == "") setOnRoute(false)
-                            }}
-                        />
-                </MapView>
-                     
-                        
-                        
-                        <FlatList
-                        data={images}
-                        extraData={images}
-                        horizontal={true}
-                        contentContainerStyle={{backgroundColor:'gray',paddingHorizontal:10}}       
-                        renderItem={({item,index})=> (
-                                    
-                            <Image style={{width: 200, height: 150}} source={{uri: item.uri}} className="rounded-xl"/>
-                      
-                        )}
-                        />
-                        <View className="flex-row">
-                        <View className="flex-row" style={{paddingHorizontal:10}}>
-                              <Text>
-                              {likes}
-                                </Text>
-                              <TouchableOpacity onPress={()=>{pressLike()}}>
-                             
-                                 <HeartIcon size={24} color={'black'}/>
-                              </TouchableOpacity>
-                        </View>
-                        <View className="flex-row" style={{paddingHorizontal:10}}>
-                              <Text>
-                              {comments_count}
-                                </Text>
-                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
-                           <ChatBubbleBottomCenterIcon color={'black'} size={24}/>
-                         </TouchableOpacity>  
-                              
-                        </View>
-             
-             
-                         <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
-                           <Text>
-                             перейти к маршруту
-                           </Text>
-                         </TouchableOpacity>
-                        </View>
-                        
-             
-                              
-        </View>
-    )
-    }
-    else {
-      return(
-        <View style={{width:'100%', backgroundColor:'red'}} className="rounded-2xl">
-            <Text className="text-2xl">
-                {name}
-            </Text>
-            <Text>
-              Теги
-            </Text>
-            
-            <FlatList
-            data={Filters}
-            vertical={true} 
-            numColumns={3}       
-            renderItem={({item})=> ( 
-                
-              <TouchableOpacity style={{height:30}} className="rounded-2xl">
-              <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
-                  <View className="rounded-full" style={{backgroundColor:'white',width:24,height:24}}>
-                          <Text>
-                             
-                          </Text>
-                  </View>
-                  <Text style={{margin:2}}>
-                      {item}
-                  </Text>
-                  <View>
-      
-                  </View>
-              </View>
-          </TouchableOpacity>
-               
-            )}
-            
-            />
-            <Text>
-                Описание: {review}
-            </Text>
-            <Text>
-               Основные точки маршрута: {points_names}
-            </Text>
-            <Text>
-               Длительность маршрута: {distance} км.
-            </Text>
-            <Text>
-              Время прохождения маршрута: {time} 
-            </Text>
-            
-            
-            
-          
-            <MapView
-                    initialRegion={{
-                      latitude: 53.407163, 
-                      longitude: 58.980291,
-                      latitudeDelta: 0.0922,
-                      longitudeDelta: 0.0421,
-                    }}
-                    showsPointsOfInterest={false}
-                    showsIndoors={false}
-                    toolbarEnabled={false}
-                    showsUserLocation
-                    mapType='terrain'        
-                    style={{width: '100%', height: '25%',borderRadius:100,padding:10 }}
+                    style={styles.map}
                     className="rounded-2xl"
                   >
                       
@@ -531,35 +388,145 @@ export default function PublicationCard(props){
                            }}
                         />
                 </MapView>
+                <Text style={styles.description}>
+                {review}
+            </Text>
                      
                         
                         
-                        
-                        <View className="flex-row">
-                        <View className="flex-row" style={{paddingHorizontal:10}}>
-                              <Text>
+                        <FlatList
+                        data={images}
+                        extraData={images}
+                        horizontal={true}
+                        contentContainerStyle={{paddingHorizontal:10, marginTop:10}}       
+                        renderItem={({item,index})=> (
+                                    
+                            <Image style={{width: heightPercentageToDP(33), height: heightPercentageToDP(27)}} source={{uri: item.uri}} className="rounded-xl"/>
+                      
+                        )}
+                        />
+                         
+                         <View className="flex-row" style={{marginVertical:8, alignItems:'center'}}>
+                        <View className="flex-row" style={{paddingHorizontal:widthPercentageToDP(2)}}>
+                          <TouchableOpacity onPress={()=>{pressLike()}}>
+                             
+                                <Image source={require('../../assets/images/heart.png')} style={styles.like}/>
+                              </TouchableOpacity>
+                              <Text style={styles.likesNumber}>
                               {likes}
                                 </Text>
-                              <TouchableOpacity onPress={()=>{pressLike()}}>
-                             
-                                 <HeartIcon size={24} color={'black'}/>
-                              </TouchableOpacity>
+                              
                         </View>
                         <View className="flex-row" style={{paddingHorizontal:10}}>
-                              <Text>
+                              
+                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
+                               <Image source={require('../../assets/images/comment.png')} style={styles.comment}/>
+
+                         </TouchableOpacity>  
+                              <Text style={styles.likesNumber}>
                               {comments_count}
                                 </Text>
-                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
-                           <ChatBubbleBottomCenterIcon color={'black'} size={24}/>
-                         </TouchableOpacity>  
-                              
                         </View>
              
              
                          <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
-                           <Text>
-                             перейти к маршруту
-                           </Text>
+                         <Image source={require('../../assets/images/goButton.png')} style={styles.go}/>
+
+                         </TouchableOpacity>
+                        </View>
+                        
+             
+                              
+        </View>
+    )
+    }
+    else {
+      return(
+        <View style={styles.container} >
+
+            <Text style={styles.nick}>
+                {name}
+            </Text>
+            
+            
+            <FlatList
+            data={Filters}
+            vertical={true} 
+            numColumns={3}       
+            renderItem={({item})=> ( 
+                
+              
+              <Tag name={item}></Tag>
+               
+            )}
+            
+            />
+           
+            
+            
+            
+         
+            <MapView
+                    initialRegion={{
+                      latitude: 53.407163, 
+                      longitude: 58.980291,
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}
+                    showsPointsOfInterest={false}
+                    showsIndoors={false}
+                    toolbarEnabled={false}
+                    showsUserLocation
+                    mapType='terrain'        
+                    style={styles.map}
+                    className="rounded-2xl"
+                  >
+                      
+                    <MapViewDirections
+                          origin={JSON.parse(startpoint)}
+                          waypoints={waypointArr}
+                          destination={JSON.parse(endpoint)}
+                          apikey={GOOGLE_MAPS_APIKEY}
+                          onReady={result=>{
+                            setDistance(result.distance)
+                            setTime(result.duration)
+                            if(result.distance == "") setOnRoute(false)
+                           }}
+                        />
+                </MapView>
+                <Text style={styles.description}>
+                {review}
+            </Text>
+                
+        
+                        
+                        
+                        <View className="flex-row" style={{marginVertical:8, alignItems:'center'}}>
+                        <View className="flex-row" style={{paddingHorizontal:widthPercentageToDP(2)}}>
+                          <TouchableOpacity onPress={()=>{pressLike()}}>
+                             
+                                <Image source={require('../../assets/images/heart.png')} style={styles.like}/>
+                              </TouchableOpacity>
+                              <Text style={styles.likesNumber}>
+                              {likes}
+                                </Text>
+                              
+                        </View>
+                        <View className="flex-row" style={{paddingHorizontal:10}}>
+                              
+                               <TouchableOpacity onPress={()=>{global.pub_id = id; navigate('Комментарии') }}>
+                               <Image source={require('../../assets/images/comment.png')} style={styles.comment}/>
+
+                         </TouchableOpacity>  
+                              <Text style={styles.likesNumber}>
+                              {comments_count}
+                                </Text>
+                        </View>
+             
+             
+                         <TouchableOpacity onPress={()=>{prepareToRoute(); navigate('Карта')}}>
+                         <Image source={require('../../assets/images/goButton.png')} style={styles.go}/>
+
                          </TouchableOpacity>
                         </View>
                         
@@ -569,3 +536,57 @@ export default function PublicationCard(props){
     )
     }
 }
+const styles = StyleSheet.create({
+  container:{
+    backgroundColor:COLORS.white,
+    width:'100%',
+    borderRadius:heightPercentageToDP(1.5),
+    marginBottom:heightPercentageToDP(1)
+  },
+  nick:{
+      fontFamily:'Black',
+      color:COLORS.black,
+    marginLeft:widthPercentageToDP(5),
+    marginTop:heightPercentageToDP(2),
+    fontSize:heightPercentageToDP(1.6)
+  },
+  description:{
+    marginTop:heightPercentageToDP(-11),
+    fontFamily:'SemiBold',
+    width:widthPercentageToDP(65),
+    marginLeft:widthPercentageToDP(2),
+    height: widthPercentageToDP(23),
+    fontSize:heightPercentageToDP(1.4)
+  },
+  map:{
+    width: '27%', 
+    height: widthPercentageToDP(23),
+    borderBottomEndRadius:heightPercentageToDP(1.5),
+    borderWidth:1,
+    marginLeft:widthPercentageToDP(70),
+    marginTop:heightPercentageToDP(1),
+
+  },
+  like:{
+    width:23,
+    height:20
+  },
+  likesNumber:{
+    marginLeft:widthPercentageToDP(1.3),
+    textAlign:'center',
+    fontFamily:'Medium',
+    fontSize:heightPercentageToDP(2),
+    textAlignVertical:'top',
+    height:20
+
+  },
+  comment:{
+    width:21,
+    height:20
+  },
+  go:{
+    width:105,
+    height:29,
+    marginLeft:widthPercentageToDP(47)
+  }
+})

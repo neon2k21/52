@@ -26,15 +26,120 @@ const Tab = createBottomTabNavigator()
 
 
 
-function Bottom_stacknavigator(){
-  const [Home, steHome] = useState({
+function Bottom_stacknavigator(){ 
+  const [screen, setScreen]=useState(1)
+  const [go,setGo]=useState(true)
+  ///состояния кнопок
+  const [Home, setHome] = useState({
     tabBarLabel: '',
             tabBarIcon:({})=>(
-              <TouchableOpacity>
-             <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-2)}}source={require('../assets/images/mapActive.png')} />
+              <TouchableOpacity onPress={()=>{setScreen(1), setGo(true)}}>
+             <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5)}}source={require('../assets/images/mapActive.png')} />
              </TouchableOpacity>
             ),
   })
+  const [Publications, setPublications] = useState({
+    tabBarLabel: '',
+            tabBarIcon:({})=>(
+              <TouchableOpacity onPress={()=>{setScreen(2), setGo(true)}}>
+             <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-4)}}source={require('../assets/images/publicationInactive.png')} />
+             </TouchableOpacity>
+            ),
+  })
+  const [ProfileS, setProfile] = useState({
+    tabBarLabel: '',
+            tabBarIcon:({})=>(
+              <TouchableOpacity onPress={()=>{setScreen(3), setGo(true)}}>
+             <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-7)}}source={require('../assets/images/profileInactive.png')} />
+             </TouchableOpacity>
+            ),
+  })
+  if(go){
+
+///экран 1
+  if (screen==1){
+    setHome({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(1),setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5)}}source={require('../assets/images/mapActive.png')} />
+       </TouchableOpacity>
+      ),
+    })
+    setPublications({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(2), setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5),left:widthPercentageToDP(-4)}}source={require('../assets/images/publicationInactive.png')} />
+       </TouchableOpacity>
+      ),
+    })
+    setProfile({
+      tabBarLabel: '',
+              tabBarIcon:({})=>(
+                <TouchableOpacity onPress={()=>{setScreen(3), setGo(true)}}>
+               <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-7)}}source={require('../assets/images/profileInactive.png')} />
+               </TouchableOpacity>
+              ),
+    })
+  }
+
+  ///экран2
+  if (screen==2){
+    setHome({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(1),setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5)}}source={require('../assets/images/mapInactive.png')} />
+       </TouchableOpacity>
+      ),
+    });
+    setPublications({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(2), setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-4)}}source={require('../assets/images/publicationActive.png')} />
+       </TouchableOpacity>
+      ),
+    })
+    setProfile({
+      tabBarLabel: '',
+              tabBarIcon:({})=>(
+                <TouchableOpacity onPress={()=>{setScreen(3), setGo(true)}}>
+               <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-7)}}source={require('../assets/images/profileInactive.png')} />
+               </TouchableOpacity>
+              ),
+    })
+  }
+  if (screen==3){
+    setHome({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(1),setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5)}}source={require('../assets/images/mapInactive.png')} />
+       </TouchableOpacity>
+      ),
+    });
+    setPublications({
+      tabBarLabel: '',
+      tabBarIcon:({})=>(
+        <TouchableOpacity onPress={()=>{setScreen(2), setGo(true)}}>
+       <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-4)}}source={require('../assets/images/publicationInactive.png')} />
+       </TouchableOpacity>
+      ),
+    })
+    setProfile({
+      tabBarLabel: '',
+              tabBarIcon:({})=>(
+                <TouchableOpacity onPress={()=>{setScreen(3), setGo(true)}}>
+               <Image style={{position:'absolute', width:heightPercentageToDP(5.7), height:heightPercentageToDP(4), top:heightPercentageToDP(-1.5), left:widthPercentageToDP(-7)}}source={require('../assets/images/profileActive.png')} />
+               </TouchableOpacity>
+              ),
+    })
+  }
+  setGo(false)
+}
+
 return(
   <Tab.Navigator
   screenOptions={{
@@ -50,8 +155,16 @@ return(
       tabBarIcon:Home.tabBarIcon
       }} 
       component={MainScreen_StackNavigator}/>
-    <Tab.Screen name = "Публикации" options={{headerShown: false, statusBarColor:COLORS.white}} component={Publication_stacknavigator}/>
-    <Tab.Screen name = "Профиль" options={{headerShown: false, statusBarColor:COLORS.white}} component={Profile}/>
+    <Tab.Screen name = "Публикации" options={{
+      headerShown: false, 
+      tabBarLabel:Publications.tabBarLabel,
+      tabBarIcon:Publications.tabBarIcon
+      }} component={Publication_stacknavigator}/>
+    <Tab.Screen name = "Профиль" options={{
+      headerShown: false, 
+      tabBarLabel:ProfileS.tabBarLabel,
+      tabBarIcon:ProfileS.tabBarIcon
+      }} component={Profile}/>
   </Tab.Navigator>
 )
   
@@ -60,7 +173,7 @@ return(
 function Publication_stacknavigator(){
   return(
     <Publication_Stack.Navigator>
-      <Publication_Stack.Screen name = "ee" options={{headerShown: false, statusBarColor:COLORS.white}} component={PublicationsScreen}/>
+      <Publication_Stack.Screen name = "ee" options={{headerShown: false, statusBarColor:COLORS.blue}} component={PublicationsScreen}/>
       <Publication_Stack.Screen name = "Комментарии"  component={CommentScreen}/>
     </Publication_Stack.Navigator>
   )  
@@ -88,6 +201,8 @@ function MainScreen_StackNavigator(){
     </MainScreen_Stack.Navigator>
   )
 }
+
+
 
 
 

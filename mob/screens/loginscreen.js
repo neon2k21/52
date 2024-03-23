@@ -3,6 +3,7 @@ import { useState } from "react"
 import { View, Text, TextInput, TouchableOpacity, Alert,Image, StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard } from "react-native"
 import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
 import { ip_address } from "../config";
+import { COLORS } from "../color";
 
 
 const styles = StyleSheet.create({
@@ -97,7 +98,7 @@ left:25
       alignSelf:'center',
       height:35,
       width:180,
-      backgroundColor:'#8C0E03',
+      backgroundColor:COLORS.blue,
       top:234,
       borderRadius:5
     },
@@ -241,7 +242,7 @@ export default function LoginScreen(){
 
   if(activeTab==1){
     return(
-    <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'purple', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: 'center', backgroundColor: COLORS.white, justifyContent: 'center' }}>
     <View style={{ maxWidth: '75%', paddingHorizontal: 8 }}>
       
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 999 }}>
@@ -293,7 +294,7 @@ export default function LoginScreen(){
   }
   else{
   return (
-  <View style={{ flex: 1, alignItems: 'center', backgroundColor: 'purple', justifyContent: 'center' }}>
+  <View style={{ flex: 1, alignItems: 'center', backgroundColor: COLORS.white, justifyContent: 'center' }}>
     <View style={{ maxWidth: '75%', paddingHorizontal: 8 }}>
       
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 999 }}>
@@ -310,13 +311,13 @@ export default function LoginScreen(){
       
       <View style={styles.formcontainer}>
             <Image source={require('../assets/images/loginBlur.png')} style={styles.loginBlur}/>
-            <Text style={styles.title}>вход</Text>
-            <Text  style={{}}>
-                никнейм
+            <Text style={styles.title}>Регистрация</Text>
+            <Text  style={[styles.textLogin,{top:-15}]}>
+                Никнейм
               </Text>
 
               <TextInput
-              style={{backgroundColor:'red'}}
+              style={[styles.textinputLogin,{top:0}]}
 
               onChangeText={setNickName}
               value={nickname}
@@ -344,7 +345,7 @@ export default function LoginScreen(){
 
               <TouchableOpacity  style={styles.touchableopacity}  onPress={()=>{sendData();}}>
                 <Text style={styles.texttouchableopacity}>
-                  Вход
+                  Регистрация
                 </Text>
               </TouchableOpacity>
               

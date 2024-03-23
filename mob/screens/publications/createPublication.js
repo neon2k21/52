@@ -207,6 +207,7 @@ export default function CreatePublication() {
     
         var raw = JSON.stringify({
             "useradd": global.user_id, 
+            "image":global.user_avatar,
             "name":    global.userNickName,
             "points_names":waypointNames, 
             "review":comment,  
@@ -262,7 +263,7 @@ export default function CreatePublication() {
             global.tag_5 = 0
             global.tag_6 = 0
             global.tag_7 = 0
-            //navigation.goBack()
+            navigation.goBack()
     
         
        
@@ -465,14 +466,14 @@ const styles = StyleSheet.create({
     stop:{
         top:heightPercentageToDP(-3.8),
         borderColor:COLORS.white,
-        borderBottomEndRadius:heightPercentageToDP(1.8),
+        borderBottomEndRadius:heightPercentageToDP(1.8),borderBottomStartRadius:heightPercentageToDP(1.8),borderTopEndRadius:heightPercentageToDP(1.8),
+        borderTopStartRadius:heightPercentageToDP(1.8),
         borderWidth:2,
-        borderBottomStartRadius:heightPercentageToDP(1.8),
+        
         left:widthPercentageToDP(66),
         width:widthPercentageToDP(31),
         height:heightPercentageToDP(4.7),
-        borderTopEndRadius:heightPercentageToDP(1.8),
-        borderTopStartRadius:heightPercentageToDP(1.8),
+        
         justifyContent:'center',
         alignItems:'center'
     },

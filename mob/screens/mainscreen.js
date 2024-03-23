@@ -2,7 +2,7 @@ import { FlatList, TextInput, Image, Text, TouchableOpacity, View, StyleSheet, A
 import {  heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 import { useEffect, useMemo, useRef, useState, createRef, useCallback } from 'react';
 import { MagnifyingGlassCircleIcon } from 'react-native-heroicons/solid'
-import { BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList,BottomSheetView } from '@gorhom/bottom-sheet';
 import { ip_address } from '../config';
 import * as Location from 'expo-location';
 import SelectedMarker from '../components/map/selectedMarker';
@@ -15,6 +15,7 @@ import { RatingBar } from "@aashu-dubey/react-native-rating-bar";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NotificationListener, requestUserPermission } from '../notification_helper';
 import { COLORS } from '../color';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const initialRegion={
@@ -59,7 +60,7 @@ export default function UserMainScreen() {
 
   const bottomSheetRef = useRef(null);
 
-  const snapPoints = useMemo(() => ['20%', '50%', '100%'], []);
+  const snapPoints = useMemo(() => ['40%'], []);
 
   const addToFavor = () =>{
     var myHeaders = new Headers();
@@ -418,21 +419,26 @@ export default function UserMainScreen() {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={{top:90, left:widthPercentageToDP(2)}}>
+          <Pressable
+              style={styles.closeModal}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Image source={require('../assets/images/cross.png')} style={styles.cross}/>
+            </Pressable>
           <FlatList
           data={categories}
           vertical={false}
-          numColumns={2}
+          numColumns={3}
           contentContainerStyle={{ alignSelf: 'flex-start',zIndex:-1 }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          style={{ }}
           renderItem={({ item }) => (
 
             <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{getObjectsByCategory(item.id)}}>
-            <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+            <View style={{backgroundColor:COLORS.white, height:30, marginEnd:5, marginBottom:5, borderRadius:heightPercentageToDP(1.5), borderWidth:1}}>
                 
-                <Text style={{margin:2}}>
+                <Text style={{margin:2, marginHorizontal:10, color:COLORS.black, fontFamily:'SemiBold', fontSize:heightPercentageToDP(1.5)}}>
                     {item.name}
                 </Text>
                 <View>
@@ -443,11 +449,7 @@ export default function UserMainScreen() {
           )}
 
         />
-            <Pressable
-              style={styles.closeModal}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
+           
           </View>
         </View>
       </Modal>
@@ -481,78 +483,75 @@ export default function UserMainScreen() {
           ref={bottomSheetRef}
           index={0}
           snapPoints={snapPoints}
+          style={{backgroundColor:COLORS.white}}
           >
 
            
-          <View>
+          <View style={{}}>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Text style={styles.objectName}> {global.object_name} </Text>
+          <TouchableOpacity style={{position:'absolute',
+    marginLeft:widthPercentageToDP(90), marginTop:heightPercentageToDP(1)}}onPress={() => { addToFavor()}}>
+              <Image source={require('../assets/images/like.png')} style={styles.like}/>
+            </TouchableOpacity>
+            </View>
+         
+                      
+            
           
-          <RatingBar
+            <View style={{flexDirection:'row', marginLeft:widthPercentageToDP(3), marginTop:heightPercentageToDP(1)}}>
+            <Image source={require('../assets/images/mapIcon.png')} style={styles.mapIcon}/>
+            <Text style={styles.addres}> { global.object_address} </Text>
+            </View>
+            <Image source={{uri: global.object_image}} style={{width:140,height:120, borderRadius:heightPercentageToDP(1.5), marginTop:heightPercentageToDP(1), marginLeft:widthPercentageToDP(2)}}/>
+            <RatingBar
           initialRating={global.object_rating}
           direction="horizontal"
           allowHalfRating
           itemCount={5}
           itemPadding={4}
           ignoreGestures={true}
+          style={{marginTop:heightPercentageToDP(4), marginLeft:widthPercentageToDP(2)}}
           ratingElement={{
             full: <Icon name="star-rate" color="#54D3C2" size={40} />,
             half: <Icon name="star-half" color="#54D3C2" size={40} />,
             empty: <Icon name="star-border" color="#54D3C2" size={40} />,
           }}
         />
-         
-                      
             
-            <Text> {global.object_altitude} </Text>
-            <Text> { global.object_longitute} </Text>
-            <Text> {global.object_name} </Text>
-            <Text> { global.object_address} </Text>
-            <Text> {global.object_working_time} </Text>
-            <Image source={{uri: global.object_image}} style={{width:120,height:120}}/>
-            <Text> { global.object_website} </Text>
-            <Text> {  global.object_phone} </Text>
-            <Text> ПН: {global.object_monday} </Text>
-            <Text> ВТ: {global.object_tuesday} </Text>
-            <Text> СР: {global.object_wednesday} </Text>
-            <Text> ЧТ: {global.object_thursday} </Text>
-            <Text> ПТ: {global.object_friday} </Text>
-            <Text> СБ: {global.object_saturday} </Text>
-            <Text> ВС: {global.object_sunday} </Text>
-
-
-
-            <View>
-              <Text>
-                Отзывы
-              </Text>
-              <Text>
-                Маршруты
-              </Text>
-            </View>
             
+            
+          <ScrollView
+          horizontal={true}
+          style={{marginTop:heightPercentageToDP(2)}}
 
-            <TouchableOpacity onPress={() => { addToFlatlist(global.object_id, global.object_altitude, global.object_longitute, global.object_name) }}>
-              <Text>
-                добавить к маршруту
-              </Text>
-            </TouchableOpacity>
-
+          >
             <TouchableOpacity onPress={() => { navigate('Все отзывы');}}>
-              <Text>
-              Посмотреть все
-              </Text>
+              <Image source={require('../assets/images/allComments.png')} style={styles.comment}/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { addToFlatlist(global.object_id, global.object_altitude, global.object_longitute, global.object_name) }}>
+            <Image source={require('../assets/images/select.png')} style={styles.addPlace}/>
+
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => { addToFavor()}}>
-              <Text>
-              Добавить в избранное
-              </Text>
+            <TouchableOpacity onPress={{}}>
+            <Image source={require('../assets/images/phone.png')} style={styles.phone}/>
+
             </TouchableOpacity>
+            <TouchableOpacity onPress={{}}>
+            <Image source={require('../assets/images/site.png')} style={styles.site}/>
+
+            </TouchableOpacity>
+            {/* <Text> {  global.object_phone} </Text>
+            <Text> { global.object_website} </Text> */}
+</ScrollView>
+           
 
             <FlatList
             
           data={review_data}
           horizontal={true}
-          contentContainerStyle={{ backgroundColor:'green',width:'100%',height:150 }}
+          contentContainerStyle={{ width:'100%',height:150 }}
        
           renderItem={({ item, index }) => (
 
@@ -1000,6 +999,51 @@ const styles = StyleSheet.create({
     top:heightPercentageToDP(-2),
     width:widthPercentageToDP(71),
     height:heightPercentageToDP(3)
+  },
+  cross:{
+    width:24,
+    height:24,
+    marginLeft:widthPercentageToDP(70)
+  },
+  objectName:{
+    fontFamily:'ExtraBold',
+    fontSize:heightPercentageToDP(3),
+    marginLeft:widthPercentageToDP(2)
+  },
+  like:{
+    width:23,
+    height:20,
+    
+  },
+  addres:{
+    fontFamily:'SemiBold',
+    fontSize:heightPercentageToDP(1.4),
+    width:widthPercentageToDP(90),
+    marginLeft:5
+  },
+  mapIcon:{
+    width:20,
+    height:23
+  }, 
+  comment:{
+    marginLeft:widthPercentageToDP(2),
+    width:172,
+    height:35
+  },
+  addPlace:{
+    marginLeft:widthPercentageToDP(1),
+    width:135,
+    height:35
+  },
+  phone:{
+    marginLeft:widthPercentageToDP(1),
+    width:35,
+    height:35
+  },
+  site:{
+    marginLeft:widthPercentageToDP(1),
+    width:35,
+    height:35
   }
 
 })
