@@ -1,6 +1,6 @@
 import { createRef, useEffect, useRef, useState } from "react"
-import { Text, TextInput, Image, View } from "react-native";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { Text, TextInput, Image, View, StyleSheet } from "react-native";
+import { FlatList, ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
 import MapView from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -8,6 +8,12 @@ import { ip_address } from "../../config";
 import {decode as atob, encode as btoa} from 'base-64'
 import { useNavigation } from "@react-navigation/core";
 import Publication_Tag from "../../components/publication/publication_tag";
+import {COLORS} from "../../color.js"
+import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
+import { indexOf } from "lodash";
+import SelectedMarker from '../../components/map/selectedMarker.js';
+
+
 
 
 
@@ -55,14 +61,86 @@ export default function CreatePublication() {
     const [object_id_waypoint8,setobject_id_waypoint8] = useState(0)
 
     const [tags, setTags] = useState([])
-
+    const numColumns=3
     
 
     function getAllFilters(){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
     
-        
+        // const data = [
+//   { key: '1' }, { key: '2' }, { key: '3' }, { key: '4' }, { key: '5' }, { key: '6' }, { key: '7' }, { key: '8' }, { key: '9' }
+// ];
+
+// const minCols = 2;
+
+// const calcNumColumns = (width) => {
+//   const cols = width / styles.item.width;
+//   const colsFloor = Math.floor(cols) > minCols ? Math.floor(cols) : minCols;
+//   const colsMinusMargin = cols - (2 * colsFloor * styles.item.margin);
+//   if (colsMinusMargin < colsFloor && colsFloor > minCols) {
+//     return colsFloor - 1;
+//   } else return colsFloor;
+// };
+
+// const formatData = (data, numColumns) => {
+//   const amountFullRows = Math.floor(data.length / numColumns);
+//   let amountItemsLastRow = data.length - amountFullRows * numColumns;
+
+//   while (amountItemsLastRow !== numColumns && amountItemsLastRow !== 0) {
+//     data.push({key: `empty-${amountItemsLastRow}`, empty: true});
+//     amountItemsLastRow++;
+//   }
+//   return data;
+// };
+
+// const renderItem = ({ item, index }) => {
+//     if (item.empty) {
+//       return <View style={[styles.item, styles.itemTransparent]} />;
+//     }
+//     return (
+//       <View style={styles.item}>
+//         <Text style={styles.itemText}>{item.key}</Text>
+//       </View>
+//     );
+//   };
+
+// const App = () => {
+//    const {width} = useWindowDimensions();
+//     const [numColumns, setNumColumns] = useState(calcNumColumns(width));
+
+//     useEffect(() => { 
+//       setNumColumns(calcNumColumns(width));
+//       }, [width]);
+
+//     return (
+//       <FlatList
+//         key={numColumns}
+//         data={formatData(data, numColumns)}
+//         style={styles.container}
+//         numColumns={numColumns}
+//         renderItem={renderItem}
+//       />
+//     );
+// }
+
+// const styles = StyleSheet.create({
+//   item: {
+//     backgroundColor: '#A1A1A1',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     flex: 1,
+//     margin: 1,
+//     height: 120,
+//     width: 90
+//   },
+//   itemTransparent: {
+//     backgroundColor: 'transparent',
+//   },
+//   itemText: {
+//     color: '#fff',
+//   },
+// });
     
         var requestOptions = {
           method: 'GET',
@@ -124,7 +202,6 @@ export default function CreatePublication() {
       }
 
     const uploadRoute = () =>{
-        if(name != ""){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
     
@@ -158,9 +235,9 @@ export default function CreatePublication() {
             "object_id_waypoint8":object_id_waypoint8,
             "tag_1":  global.tag_1,
             "tag_2":  global.tag_2,
-            "tag_3":  global.tag_3,
+            "tag_5":  global.tag_3,
             "tag_4":  global.tag_4,
-            "tag_5":  global.tag_5,
+            "tag_3":  global.tag_5,
             "tag_6":  global.tag_6,
             "tag_7":  global.tag_7
         });
@@ -186,10 +263,8 @@ export default function CreatePublication() {
             global.tag_6 = 0
             global.tag_7 = 0
             //navigation.goBack()
-    }
-        if(name=="" && comment !== ""){
-            alert('Укажите наименование публикации')
-        }
+    
+        
        
     }
 
@@ -256,51 +331,84 @@ export default function CreatePublication() {
     }
     
     
-
+console.log(waypointNames)
 
     return (
-        <View style={{ width: '100%', height: '100%' }}>
-            <Text>
-                Создать публикацию
+        <View style={styles.container}>
+             <TouchableOpacity onPress={()=>{navigation.goBack()}}>
+                <Image source={require('../../assets/images/buttonBack.png')} style={styles.buttonBack}></Image>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{navigation.goBack()}}>
+                <View style={styles.stop}>
+                <Text style={styles.stopText}>
+                    Отменить
+                </Text>
+                </View>
+            </TouchableOpacity>
+            <Text style={styles.head}>
+                Создание публикации:
             </Text>
-            <Text>
-                Наименование публикации
-            </Text>
-            <TextInput
-            onChangeText={setName}
-            value={name}
-            />
-            <Text>
-                Точки Маршрута:
-            </Text>
-            <Text>
-                {waypointNames}
-            </Text>
+            
+           
           
-            <Text>
-                Теги
+            <Text style={styles.tegs}>
+                теги
             </Text> 
             <FlatList
+            style={styles.tegsList}
             data={tags}
-            vertical={true} 
-            numColumns={3}       
+vertical={true}            
+numColumns={4}       
             renderItem={({item})=> ( 
                 
                     <Publication_Tag id={item.id} name={item.name}/>
                
             )}
-            />
-             <Text>
-                Комментарий
+            />           
+             <Text style={styles.tegsText}>*Нажмите,чтобы выбрать</Text>
+
+             <Text style = {styles.pleceHead}>места</Text>
+             <ScrollView horizontal={true} style={{top:heightPercentageToDP(74), position:'absolute'}}>
+             <FlatList
+          data={markers_data}
+          id='haha'
+          extraData={markers_data}
+          vertical={true}
+          numColumns={3}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={styles.placeList}
+          renderItem={({ item, index }) => (
+
+
+              <SelectedMarker id={index + 1} altitude={item.altitude} longitute={item.longitute} name={item.name} />
+
+          )}
+
+        />
+        </ScrollView>
+             <Text style = {styles.descriptionText}>
+                описание
             </Text>
             <TextInput
+            style = {styles.descrription}
+            placeholder="Введите текст..."
+            multiline
+            editable
+            textAlignVertical='top'
+            placeholderTextColor={COLORS.black}
+            selectionColor={COLORS.black}
+            clearButtonMode="always"
+          
             onChangeText={setComment}
             value={comment}
             />
+            
             <TouchableOpacity onPress={()=>{openGallery()}}>
-                 <Text>
-                Добавить картинку
+            <Text style={styles.photoHead}>
+фотографии
             </Text>
+                 <Image source={require('../../assets/images/addPhoto.png')} style = {styles.plus}/>
             </TouchableOpacity>
             <FlatList
             data={image}
@@ -313,19 +421,135 @@ export default function CreatePublication() {
             />
           
             
-            <TouchableOpacity onPress={()=>{write_data()}}>
-                <Text>
-                    Готов
+            <TouchableOpacity style={{justifyContent:'center',alignItems:'center', top:heightPercentageToDP(-1)}}onPress={()=>{write_data()}}>
+                <Image source={require('../../assets/images/buttonReady.png')} style={styles.buttonReady}></Image>
+                <Text style={styles.readyText}>
+                    Создать Публикацию
                 </Text>
+               
             </TouchableOpacity>
            
-            <TouchableOpacity onPress={()=>{navigation.goBack()}}>
-                <Text>
-                    Отмена
-                </Text>
-            </TouchableOpacity>
+          
         </View>
     )
 
 
 }
+const styles = StyleSheet.create({
+    container:{
+        backgroundColor:COLORS.blue,
+        width: '100%', height: '100%',
+    },
+    head:{
+        fontFamily:'Black',
+        color:COLORS.white,
+        fontSize:heightPercentageToDP(3.7),
+        width:widthPercentageToDP(80),
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(-0.9),
+        lineHeight:heightPercentageToDP(3.7)
+    },
+    tegs:{
+        fontFamily:'ExtraBold',
+        color:COLORS.white,
+        fontSize:heightPercentageToDP(1.6),
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(1.8)
+    },
+    tegsList:{
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(21.5),
+        width:widthPercentageToDP(100),
+        position:'absolute',
+    },
+    stop:{
+        top:heightPercentageToDP(-3.8),
+        borderColor:COLORS.white,
+        borderBottomEndRadius:heightPercentageToDP(1.8),
+        borderWidth:2,
+        borderBottomStartRadius:heightPercentageToDP(1.8),
+        left:widthPercentageToDP(66),
+        width:widthPercentageToDP(31),
+        height:heightPercentageToDP(4.7),
+        borderTopEndRadius:heightPercentageToDP(1.8),
+        borderTopStartRadius:heightPercentageToDP(1.8),
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    stopText:{
+        color:COLORS.white,
+        fontFamily:'Bold',
+        fontSize:heightPercentageToDP(1.8),
+        letterSpacing:heightPercentageToDP(-0.1),
+    },
+    buttonBack:{
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(0.7),
+        height:heightPercentageToDP(4.7),
+        width:heightPercentageToDP(4.7),
+    },
+    tegsText:{
+        color:COLORS.black,
+        fontFamily:'Bold',
+        fontSize:heightPercentageToDP(1.4),
+        top:heightPercentageToDP(9),
+        left:widthPercentageToDP(2),
+        letterSpacing:heightPercentageToDP(-0.07),
+    },
+    pleceHead:{
+        fontFamily:'ExtraBold',
+        color:COLORS.white,
+        fontSize:heightPercentageToDP(1.6),
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(50)
+    },
+    placeList:{
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(0),
+    },
+    descriptionText:{
+        fontFamily:'ExtraBold',
+        color:COLORS.white,
+        fontSize:heightPercentageToDP(1.6),
+        left:widthPercentageToDP(2),
+       top:heightPercentageToDP(9)
+    },
+    descrription:{
+        color:COLORS.black,
+        backgroundColor:COLORS.white,
+        width:widthPercentageToDP(96),
+        height:heightPercentageToDP(23),
+        left:widthPercentageToDP(2),
+        borderRadius:heightPercentageToDP(2),
+        fontFamily:'SemiBold',
+        fontSize:heightPercentageToDP(1.5),
+        paddingVertical:heightPercentageToDP(2),
+        paddingHorizontal:widthPercentageToDP(3),
+        top:heightPercentageToDP(10)
+    }, 
+    photoHead:{
+        fontFamily:'ExtraBold',
+        color:COLORS.white,
+        fontSize:heightPercentageToDP(1.6),
+        left:widthPercentageToDP(2),
+        top:heightPercentageToDP(12.5)
+    },
+    plus:{
+        width:widthPercentageToDP(5),
+        height:widthPercentageToDP(5),
+        top:heightPercentageToDP(10.5),
+        left:widthPercentageToDP(93)
+    },
+    readyText:{
+        fontFamily:'Bold',
+        position:'absolute',
+        color:COLORS.black,
+        fontSize:heightPercentageToDP(1.8),
+        left:widthPercentageToDP(31),
+        letterSpacing:-1
+    },
+    buttonReady:{
+        width:widthPercentageToDP(102),
+        height:heightPercentageToDP(7)
+    }
+});

@@ -28,10 +28,11 @@ export default function App() {
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
   const [fontsLoaded, fontError] = useFonts({
-    'Black': require('./assets/font/Inter-Black.ttf'),
-    'Bold': require('./assets/font/Inter-Bold.ttf'),
-     'Medium': require('./assets/font/Inter-Medium.ttf'),
-     'SemiBold': require('./assets/font/Inter-SemiBold.ttf')
+    'Black': require('./assets/font/Black.ttf'),
+    'Bold': require('./assets/font/Bold.ttf'),
+     'Medium': require('./assets/font/Medium.ttf'),
+     'SemiBold': require('./assets/font/Bold.ttf'),
+     'ExtraBold': require('./assets/font/ExtraBold.ttf')
   });
 
  useEffect(()=>{

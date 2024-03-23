@@ -1,5 +1,5 @@
-import { FlatList, TextInput, Image, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, Alert, Platform } from 'react-native';
-import {  widthPercentageToDP } from 'react-native-responsive-screen';
+import { FlatList, TextInput, Image, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, Alert, Platform, Pressable, Modal, Dimensions } from 'react-native';
+import {  heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 import { useEffect, useMemo, useRef, useState, createRef, useCallback } from 'react';
 import { MagnifyingGlassCircleIcon } from 'react-native-heroicons/solid'
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetFlatList } from '@gorhom/bottom-sheet';
@@ -14,6 +14,7 @@ import Review from '../components/Review/reviewCard';
 import { RatingBar } from "@aashu-dubey/react-native-rating-bar";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NotificationListener, requestUserPermission } from '../notification_helper';
+import { COLORS } from '../color';
 
 
 const initialRegion={
@@ -29,6 +30,7 @@ const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
 
 
 
+const { width, height } = Dimensions.get("window");
 
 export default function UserMainScreen() {
 
@@ -101,7 +103,7 @@ export default function UserMainScreen() {
       })
       .catch(error => console.log('error', error));
   }
-
+  const [modalVisible, setModalVisible] = useState(false);
   const handleSearch = (query) =>{
     setSearchQuery(query)
     const formattedQuary = query;
@@ -355,8 +357,14 @@ export default function UserMainScreen() {
                   }
                   }
                   coordinate={{ latitude: parseFloat(val.longitute), longitude: parseFloat(val.altitude) }}
+                  
+                >
+                  <View style={{width:70,height:70,  alignItems:'center'}}>
+                  <Image source={require('../assets/images/markerBack.png')} style={styles.markerBack}/>
+                  <Image source={{uri: val.image}}style={styles.markerImage}></Image>
+                  </View>
+                </Marker>
 
-                />
               )
             })
           }
@@ -371,59 +379,47 @@ export default function UserMainScreen() {
         </MapView>      
       
 
-        <View style={{
-          backgroundColor: 'white', top: 40, height: widthPercentageToDP(10),
-          width: widthPercentageToDP(80), alignSelf: 'center', position: 'absolute'
-        }} className="rounded-full">
+        <View style={styles.searchContainer}>
 
-          <View style={{
-            top: 5, left: 10, height: widthPercentageToDP(8),
-            width: widthPercentageToDP(60), position: 'absolute'
-          }} className="rounded-full">
+         <Image source={require('../assets/images/searchBack.png')} style={[styles.searchContainer, styles.searchBack]}/>
+         <Pressable
+        
+        onPress={() => setModalVisible(true)}>
+        <Image style={styles.openModal}source={require('../assets/images/filter.png')}/>
+      </Pressable>
 
         <TextInput
             placeholder="Поиск"
-            placeholderTextColor={'white'}
-            selectionColor={'white'}
+            style={styles.searchInput}
+            placeholderTextColor={COLORS.black}
+            selectionColor={COLORS.black}
             clearButtonMode="always"
-          
             autoCorrect={false}
             onChangeText={(query) => handleSearch(query)}
             value= {searchQuery}
             className= "w-full text-2xl border-solid rounded-b-2xl "
-          />
+          >
+            
+          </TextInput>
 
       
 
-          </View>
+         
 
-          <MagnifyingGlassCircleIcon color={'black'} size={widthPercentageToDP(12)} style={{ top: -4, right: -275 }} />
+        
 
         </View>
-        
-        
-
-        <FlatList
-          data={markers_data}
-          extraData={markers_data}
-          vertical={true}
-          numColumns={2}
-          contentContainerStyle={{ alignSelf: 'flex-start' }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
-          renderItem={({ item, index }) => (
-
-            <TouchableOpacity onPress={() => removeItem(item.id)}>
-
-              <SelectedMarker id={index + 1} altitude={item.altitude} longitute={item.longitute} name={item.name} />
-
-            </TouchableOpacity>
-          )}
-
-        />
-
-<FlatList
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <FlatList
           data={categories}
           vertical={false}
           numColumns={2}
@@ -447,6 +443,38 @@ export default function UserMainScreen() {
           )}
 
         />
+            <Pressable
+              style={styles.closeModal}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+     
+        
+
+        <FlatList
+          data={markers_data}
+          extraData={markers_data}
+          vertical={true}
+          numColumns={2}
+          contentContainerStyle={{ alignSelf: 'flex-start' }}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          renderItem={({ item, index }) => (
+
+            <TouchableOpacity onPress={() => removeItem(item.id)}>
+
+              <SelectedMarker id={index + 1} altitude={item.altitude} longitute={item.longitute} name={item.name} />
+
+            </TouchableOpacity>
+          )}
+
+        />
+
+
 
 
 <BottomSheetModal
@@ -655,33 +683,34 @@ export default function UserMainScreen() {
        
 
 
-        <View style={{
-          backgroundColor: 'white', top: 40, height: widthPercentageToDP(10),
-          width: widthPercentageToDP(80), alignSelf: 'center', position: 'absolute'
-        }} className="rounded-full">
+        <View style={styles.searchContainer}>
 
-          <View style={{
-            top: 5, left: 10, height: widthPercentageToDP(8),
-            width: widthPercentageToDP(60), position: 'absolute'
-          }} className="rounded-full">
+         <Image source={require('../assets/images/searchBack.png')} style={[styles.searchContainer, styles.searchBack]}/>
+         <Pressable
+        
+        onPress={() => setModalVisible(true)}>
+        <Image style={styles.openModal}source={require('../assets/images/filter.png')}/>
+      </Pressable>
 
         <TextInput
             placeholder="Поиск"
-            placeholderTextColor={'white'}
-            selectionColor={'white'}
+            style={styles.searchInput}
+            placeholderTextColor={COLORS.black}
+            selectionColor={COLORS.black}
             clearButtonMode="always"
-          
             autoCorrect={false}
             onChangeText={(query) => handleSearch(query)}
             value= {searchQuery}
             className= "w-full text-2xl border-solid rounded-b-2xl "
-          />
+          >
+            
+          </TextInput>
 
       
 
-          </View>
+         
 
-          <MagnifyingGlassCircleIcon color={'black'} size={widthPercentageToDP(12)} style={{ top: -4, right: -275 }} />
+        
 
         </View>
 
@@ -932,212 +961,45 @@ export default function UserMainScreen() {
 
 const styles = StyleSheet.create({
 
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: 'grey',
+  marker:{
+    backgroundColor:COLORS.black
   },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
+  markerImage:{
+    width:35,
+    height:35,
+    borderRadius:35,
+    top:1
   },
-  externalView: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgb(249, 241, 229)'
+  markerBack:{
+    width:70,
+    height:70,
+    position:'absolute',
+   
   },
-  prodileView: {
-    position: 'absolute'
+  searchContainer:{
+    position:'absolute',
+    width:widthPercentageToDP(96),
+    height:heightPercentageToDP(6.6),
+        left:widthPercentageToDP(2),
+    top:heightPercentageToDP(0.7)
   },
-  profileText: {
-    width: 200,
-    marginTop: 55,
-    marginStart: 60,
-    fontSize: 15,
-    fontFamily: 'Bold',
-    position: 'absolute',
-    color: 'rgb(4,4,4)',
-
+  searchBack:{
+    left:0
   },
-  flalistView: {
-
+  openModal:{
+    left:widthPercentageToDP(84),
+    top:heightPercentageToDP(1.7),
+    width:heightPercentageToDP(4.5),
+    height:heightPercentageToDP(4.5)
   },
-  myobjecttext: {
-    position: 'absolute',
-    fontFamily: 'Black',
-    fontSize: 15,
-    textTransform: 'lowercase',
-    marginStart: 15,
-    marginTop: 129,
-    color: 'rgb(4,4,4)'
-  },
-  flatlist: {
-    width: widthPercentageToDP(100),
-    position: 'absolute',
-    marginTop: 162,
-    height: 171
-  },
-
-  itemseparator: {
-    height: "10%",
-    width: 10
-  },
-  aboutcompany: {
-    position: 'absolute',
-    fontFamily: 'Black',
-    fontSize: 15,
-    textTransform: 'lowercase',
-    marginStart: 15,
-    marginTop: 368
-    ,
-    color: 'rgb(4,4,4)'
-  },
-  viewforlogo: {
-    position: 'absolute',
-    height: 66,
-    marginTop: 401,
-    marginStart: 15,
-    width: widthPercentageToDP(27),
-  },
-  ovalFIO: {
-    width: 35,
-    height: 35,
-    position: 'absolute',
-    marginTop: 55,
-    marginStart: 15,
-
-  },
-  emojiUser: {
-    width: 25,
-    height: 25,
-    position: 'absolute',
-    marginTop: 61,
-    marginStart: 20
-  },
-  header: {
-    position: 'absolute',
-    width: widthPercentageToDP(100)
-  },
-  bigtext: {
-    position: 'absolute',
-    width: 360,
-    marginStart: 15,
-    fontFamily: 'Medium',
-    fontSize: 14,
-    marginTop: 491
-
-  },
-  timeText: {
-    position: 'absolute',
-    width: 360,
-    marginStart: 46,
-    fontFamily: 'Bold',
-    fontSize: 14,
-    marginTop: 647
-  },
-  workText: {
-    position: 'absolute',
-    width: 360,
-    marginStart: 46,
-    fontFamily: 'Medium',
-    fontSize: 14,
-    marginTop: 684
-  },
-  placeText: {
-    position: 'absolute',
-    width: 360,
-    marginStart: 46,
-    fontFamily: 'Bold',
-    fontSize: 14,
-    marginTop: 721
-  },
-  textList1: {
-    position: 'absolute',
-    width: 339,
-    marginStart: 36,
-    fontFamily: 'Medium',
-    fontSize: 14,
-    marginTop: 559
-  },
-  textList2: {
-    position: 'absolute',
-    width: 339,
-    marginStart: 36,
-    fontFamily: 'Medium',
-    fontSize: 14,
-    marginTop: 593
-  },
-  textList3: {
-    position: 'absolute',
-    width: 339,
-    marginStart: 36,
-    fontFamily: 'Medium',
-    fontSize: 14,
-    marginTop: 610
-  },
-  daught1: { position: 'absolute', marginLeft: 23, marginTop: 568, width: 5, height: 5 },
-  daught2: { position: 'absolute', marginLeft: 23, marginTop: 602, width: 5, height: 5 },
-  daught3: { position: 'absolute', marginLeft: 23, marginTop: 619, width: 5, height: 5 },
-  nextTextBig: {
-    position: 'absolute',
-    width: 150,
-    marginStart: 134,
-    fontFamily: 'Bold',
-    fontSize: 14,
-    marginTop: 508
-  },
-  nextTextWork: {
-    position: 'absolute',
-    width: 150,
-    marginStart: 133,
-    fontFamily: 'Bold',
-    fontSize: 14,
-    marginTop: 683
-  },
-  emojiCool: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    marginTop: 477,
-    marginStart: 15
-  },
-  emojiStrong: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    marginTop: 675,
-    marginStart: 15
-  },
-  emojiClock: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    marginTop: 638,
-    marginStart: 15
-  },
-  emojiPlace: {
-    position: 'absolute',
-    width: 28,
-    height: 28,
-    marginTop: 712,
-    marginStart: 15
-  },
-  textCall: {
-    position: 'absolute',
-    fontFamily: 'Black',
-    fontSize: 15,
-    textTransform: 'uppercase',
-    color: 'rgb(255,255,255)',
-
-
-  },
-  imageCall: {
-    width: '45%',
-    height: 35,
-    marginTop: 768,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginStart: widthPercentageToDP(50)
-  },
+  searchInput:{
+    fontFamily:'SemiBold',
+    fontSize:heightPercentageToDP(1.8),
+    left:widthPercentageToDP(6),
+    textAlignVertical:'center',
+    top:heightPercentageToDP(-2),
+    width:widthPercentageToDP(71),
+    height:heightPercentageToDP(3)
+  }
 
 })
