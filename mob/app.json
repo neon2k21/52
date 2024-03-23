@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Трип",
-    "slug": "Трип",
+    "slug": "Trip",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,7 +29,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "d74fcf60-eec0-45f5-94fd-8b4c4141f7fe"
+        "projectId": "af17c196-8d5c-440a-8465-28edf29de17b"
       }
     }
   }

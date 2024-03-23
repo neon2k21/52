@@ -1,4 +1,4 @@
-rootProject.name = 'client'
+rootProject.name = 'Трип'
 
 dependencyResolutionManagement {
   versionCatalogs {
