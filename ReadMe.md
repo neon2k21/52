@@ -23,3 +23,16 @@
 6) Прописать в терминале (ctrl+j/cmd+j) команду npm run android --stacktrace запуск клиента
 7) Найти в корне проекта файл config.js и поменять только ip-адрес, но если сервер указал порт отличный от 8080 – поменять его тоже.
 8) Отсканировать полученный qr-код на телефоне, предварительно установив приложение Expo/ Expo Go – play market/appstore
+
+![Скрин](/Screenshots/1.jpg)
+![Скрин](/Screenshots/2.jpg)
+![Скрин](/Screenshots/3.jpg)
+![Скрин](/Screenshots/4.jpg)
+![Скрин](/Screenshots/5.jpg)
+![Скрин](/Screenshots/6.jpg)
+![Скрин](/Screenshots/7.jpg)
+![Скрин](/Screenshots/8.jpg)
+![Скрин](/Screenshots/9.jpg)
+![Скрин](/Screenshots/10.jpg)
+![Скрин](/Screenshots/11.jpg)
+![Скрин](/Screenshots/12.jpg)
