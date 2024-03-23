@@ -583,7 +583,7 @@ export default function UserMainScreen() {
       <BottomSheetModalProvider style={{ height: '100%', width: '100%', backgroundColor: 'red' }}>
           
         
-         <MapView
+          <MapView
           showsPointsOfInterest={false}
           showsIndoors={false}
           toolbarEnabled={false}
@@ -599,33 +599,39 @@ export default function UserMainScreen() {
               return (
 
                 <Marker
-                key={val.id}
-                onPress={() => {
-                 
-                    global.object_id = val.id, 
-                    global.object_altitude = val.altitude, 
-                    global.object_longitute = val.longitute, 
-                    global.object_name = val.name, 
-                    global.object_address = val.address, 
-                    global.object_working_time = val.working_time, 
-                    global.object_image = val.image, 
-                    global.object_website = val.website, 
-                    global.object_phone = val.phone, 
-                    global.object_monday = val.monday, 
-                    global.object_tuesday = val.tuesday, 
-                    global.object_wednesday = val.wednesday, 
-                    global.object_thursday = val.thursday, 
-                    global.object_friday = val.friday, 
-                    global.object_saturday = val.saturday, 
-                    global.object_sunday = val.sunday, 
-                    global.object_rating = val.rating
-                    getReviews(global.object_id)
-                    handleSheetChanges()
-                }
-                }
-                coordinate={{ latitude: parseFloat(val.longitute), longitude: parseFloat(val.altitude) }}
+                  key={val.id}
+                  onPress={() => {
+                   
+                      global.object_id = val.id, 
+                      global.object_altitude = val.altitude, 
+                      global.object_longitute = val.longitute, 
+                      global.object_name = val.name, 
+                      global.object_address = val.address, 
+                      global.object_working_time = val.working_time, 
+                      global.object_image = val.image, 
+                      global.object_website = val.website, 
+                      global.object_phone = val.phone, 
+                      global.object_monday = val.monday, 
+                      global.object_tuesday = val.tuesday, 
+                      global.object_wednesday = val.wednesday, 
+                      global.object_thursday = val.thursday, 
+                      global.object_friday = val.friday, 
+                      global.object_saturday = val.saturday, 
+                      global.object_sunday = val.sunday, 
+                      global.object_rating = val.rating
+                      getReviews(global.object_id)
+                      handleSheetChanges()
+                  }
+                  }
+                  coordinate={{ latitude: parseFloat(val.longitute), longitude: parseFloat(val.altitude) }}
+                  
+                >
+                  <View style={{width:70,height:70,  alignItems:'center'}}>
+                  <Image source={require('../assets/images/markerBack.png')} style={styles.markerBack}/>
+                  <Image source={{uri: val.image}}style={styles.markerImage}></Image>
+                  </View>
+                </Marker>
 
-              />
               )
             })
           }
@@ -637,10 +643,10 @@ export default function UserMainScreen() {
                 apikey={GOOGLE_MAPS_APIKEY}
                
               />
-        </MapView>
-           <TouchableOpacity style={{ position:'absolute' ,top: 250,backgroundColor:'green',right:120}} onPress={()=>{setmarkers_data([]); drawRoute([]);global.markers_data=[]}}>
-            <Text>
-              ОЧИСТИТЬ
+        </MapView>   
+           <TouchableOpacity style={{ position:'absolute' ,top: 90,backgroundColor:COLORS.black,right:10, padding:10,borderRadius:heightPercentageToDP(1.5)}} onPress={()=>{setmarkers_data([]); drawRoute([]);global.markers_data=[]}}>
+            <Text style={{color:COLORS.white}}>
+              очистить
             </Text>
           </TouchableOpacity>
 
@@ -648,36 +654,32 @@ export default function UserMainScreen() {
 
        
 
-        <TouchableOpacity 
+        
+
+        <TouchableOpacity
+        onPress={()=>{startRouting(global.user_location);global.route_type='WALKING' 
+        }}
+        className="rounded-lg" style={{marginLeft:widthPercentageToDP(2)}}> 
+                    <Image source={require('../assets/images/goLeg.png')}/>
+
+        </TouchableOpacity>
+        <TouchableOpacity
+        onPress={()=>{startRouting(global.user_location); global.route_type='DRIVING' 
+        }}
+        className="rounded-lg" style={{marginLeft:widthPercentageToDP(1)}}> 
+                    <Image source={require('../assets/images/goCar.png')}/>
+
+        </TouchableOpacity>
+<TouchableOpacity 
         onPress={()=>{
           global.route_to_publicate = routing
           global.waypointNames = markers_data
           navigate('Создать публикацию')
         }}
-        className="rounded-lg" style={{ width: 120, height: 50, backgroundColor: 'red'}}>
-          <Text>
-            Создать публикацию
-          </Text>
+        className="rounded-lg" style={{ marginLeft:widthPercentageToDP(1)}}>
+          <Image source={require('../assets/images/add.png')}/>
         </TouchableOpacity>
-
         
-        <TouchableOpacity
-        onPress={()=>{startRouting(global.user_location); global.route_type='DRIVING' 
-        }}
-        className="rounded-lg" style={{ width: 120, height: 50, backgroundColor: 'red', right:-150}}> 
-          <Text>
-            В путь машина
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-        onPress={()=>{startRouting(global.user_location);global.route_type='WALKING' 
-        }}
-        className="rounded-lg" style={{ width: 120, height: 50, backgroundColor: 'red', right:90}}> 
-          <Text>
-            В путь на ногах
-          </Text>
-        </TouchableOpacity>
         </View>
        
 
@@ -732,20 +734,35 @@ export default function UserMainScreen() {
           )}
 
         />
-<FlatList
+ <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={{top:90, left:widthPercentageToDP(2)}}>
+          <Pressable
+              style={styles.closeModal}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Image source={require('../assets/images/cross.png')} style={styles.cross}/>
+            </Pressable>
+          <FlatList
           data={categories}
           vertical={false}
-          numColumns={2}
+          numColumns={3}
           contentContainerStyle={{ alignSelf: 'flex-start',zIndex:-1 }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          style={{ }}
           renderItem={({ item }) => (
 
             <TouchableOpacity style={{height:30}} className="rounded-2xl" onPress={()=>{getObjectsByCategory(item.id)}}>
-            <View className="rounded-2xl flex-row" style={{backgroundColor:'green', height:30}}>
+            <View style={{backgroundColor:COLORS.white, height:30, marginEnd:5, marginBottom:5, borderRadius:heightPercentageToDP(1.5), borderWidth:1}}>
                 
-                <Text style={{margin:2}}>
+                <Text style={{margin:2, marginHorizontal:10, color:COLORS.black, fontFamily:'SemiBold', fontSize:heightPercentageToDP(1.5)}}>
                     {item.name}
                 </Text>
                 <View>
@@ -756,86 +773,85 @@ export default function UserMainScreen() {
           )}
 
         />
+           
+          </View>
+        </View>
+      </Modal>
 
-<BottomSheetModal
+      <BottomSheetModal
           ref={bottomSheetRef}
           index={0}
           snapPoints={snapPoints}
+          style={{backgroundColor:COLORS.white}}
           >
 
            
-          <View style={styles.contentContainer}>
+          <View style={{}}>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Text style={styles.objectName}> {global.object_name} </Text>
+          <TouchableOpacity style={{position:'absolute',
+    marginLeft:widthPercentageToDP(90), marginTop:heightPercentageToDP(1)}}onPress={() => { addToFavor()}}>
+              <Image source={require('../assets/images/like.png')} style={styles.like}/>
+            </TouchableOpacity>
+            </View>
+         
+                      
             
-          <RatingBar
+          
+            <View style={{flexDirection:'row', marginLeft:widthPercentageToDP(3), marginTop:heightPercentageToDP(1)}}>
+            <Image source={require('../assets/images/mapIcon.png')} style={styles.mapIcon}/>
+            <Text style={styles.addres}> { global.object_address} </Text>
+            </View>
+            <Image source={{uri: global.object_image}} style={{width:140,height:120, borderRadius:heightPercentageToDP(1.5), marginTop:heightPercentageToDP(1), marginLeft:widthPercentageToDP(2)}}/>
+            <RatingBar
           initialRating={global.object_rating}
           direction="horizontal"
           allowHalfRating
           itemCount={5}
           itemPadding={4}
           ignoreGestures={true}
+          style={{marginTop:heightPercentageToDP(4), marginLeft:widthPercentageToDP(2)}}
           ratingElement={{
             full: <Icon name="star-rate" color="#54D3C2" size={40} />,
             half: <Icon name="star-half" color="#54D3C2" size={40} />,
             empty: <Icon name="star-border" color="#54D3C2" size={40} />,
           }}
         />
-         
-                      
-            <Text> { global.object_id} </Text>
-            <Text> {global.object_altitude} </Text>
-            <Text> { global.object_longitute} </Text>
-            <Text> {global.object_name} </Text>
-            <Text> { global.object_address} </Text>
-            <Text> {global.object_working_time} </Text>
-            <Text> { global.object_image} </Text>
-            <Text> { global.object_website} </Text>
-            <Text> {  global.object_phone} </Text>
-            <Text> {global.object_monday} </Text>
-            <Text> {global.object_tuesday} </Text>
-            <Text> {global.object_wednesday} </Text>
-            <Text> { global.object_thursday} </Text>
-            <Text> {  global.object_friday} </Text>
-            <Text> {   global.object_saturday} </Text>
-            <Text> {   global.object_sunday} </Text>
+            
+            
+            
+          <ScrollView
+          horizontal={true}
+          style={{marginTop:heightPercentageToDP(2)}}
 
-
-
-            <View>
-              <Text>
-                Отзывы
-              </Text>
-              <Text>
-                Маршруты
-              </Text>
-            </View>
-
-
+          >
+            <TouchableOpacity onPress={() => { navigate('Все отзывы');}}>
+              <Image source={require('../assets/images/allComments.png')} style={styles.comment}/>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => { addToFlatlist(global.object_id, global.object_altitude, global.object_longitute, global.object_name) }}>
-              <Text>
-                добавить к маршруту
-              </Text>
+            <Image source={require('../assets/images/select.png')} style={styles.addPlace}/>
+
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => { navigate('Написать отзыв');global.object_id_for_review = selectedMarkerData.id }}>
-              <Text>
-              Написать отзыв
-              </Text>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={{}}>
+            <Image source={require('../assets/images/phone.png')} style={styles.phone}/>
 
-            <TouchableOpacity onPress={() => { addToFavor()}}>
-              <Text>
-              Добавить в избранное
-              </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={{}}>
+            <Image source={require('../assets/images/site.png')} style={styles.site}/>
+
+            </TouchableOpacity>
+            {/* <Text> {  global.object_phone} </Text>
+            <Text> { global.object_website} </Text> */}
+</ScrollView>
+           
 
             <FlatList
+            
           data={review_data}
-          extraData={review_data}
           horizontal={true}
-          contentContainerStyle={{ alignSelf: 'flex-start' }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ position: 'absolute', width: '100%', height: 120, top: 90 }}
+          contentContainerStyle={{ width:'100%',height:150 }}
+       
           renderItem={({ item, index }) => (
 
             <Review 
@@ -848,10 +864,10 @@ export default function UserMainScreen() {
               image3={item.image3}
               data={item.data} 
               />
-
           )}
 
         />
+            
 
 
           </View>
