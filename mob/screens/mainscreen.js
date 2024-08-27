@@ -26,7 +26,7 @@ const initialRegion={
 }
 
 
-const GOOGLE_MAPS_APIKEY = "AIzaSyDbRLi8IgYRaG-NzyNyQn-p_7Kznko_z-o"
+const GOOGLE_MAPS_APIKEY = ""
 
 
 
